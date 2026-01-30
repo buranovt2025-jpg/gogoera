@@ -2,33 +2,43 @@
   Обновить Flutter на сервере (Dart 3.6+)
 ========================================
 
-Ошибка "language version is too high" — на сервере Flutter 3.24.5 (Dart 3.5),
-а пакет image_picker_platform_interface 2.11.1 требует Dart 3.6+.
+Если curl скачал не архив (404), используй установку через Git.
 
-Выполни на сервере по шагам (обновление Flutter, затем сборка).
-
---- 1. Обновить Flutter до 3.27+ (Dart 3.6+) ---
+--- Способ 1: через Git (надёжно) ---
 
 sudo rm -rf /opt/flutter
+cd /opt
+sudo git clone https://github.com/flutter/flutter.git
+cd flutter
+sudo git fetch --tags
+sudo git checkout 3.27.1
+# если тега 3.27.1 нет, посмотри: git tag -l "3.*" | tail -20
+# и выбери последний стабильный, например 3.26.0 или 3.35.0
+sudo chown -R root:root /opt/flutter
+git config --global --add safe.directory /opt/flutter
+/opt/flutter/bin/flutter --version
+/opt/flutter/bin/flutter precache
+
+(Должна быть версия с Dart 3.6+.)
+
+--- Способ 2: скачать архив (проверь, что скачалось) ---
+
 cd /tmp
-curl -sL -o flutter.tar.xz "https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.27.1-stable.tar.xz" || curl -sL -o flutter.tar.xz "https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.26.0-stable.tar.xz"
+rm -f flutter.tar.xz
+curl -sL -o flutter.tar.xz "https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.35.4-stable.tar.xz"
+file flutter.tar.xz
+ls -la flutter.tar.xz
+
+Если в выводе file: "XZ compressed data" — архив ок. Если "HTML" или "ASCII" — ссылка неверная.
+
+Тогда:
 sudo tar xf flutter.tar.xz -C /opt
 rm -f flutter.tar.xz
-if [ -d /opt/flutter/flutter ]; then
-  sudo mv /opt/flutter/flutter /opt/flutter_new
-  sudo rm -rf /opt/flutter
-  sudo mv /opt/flutter_new /opt/flutter
-fi
+[ -d /opt/flutter/flutter ] && sudo mv /opt/flutter/flutter /opt/fnew && sudo rm -rf /opt/flutter && sudo mv /opt/fnew /opt/flutter
 git config --global --add safe.directory /opt/flutter
 /opt/flutter/bin/flutter --version
 
-(Должна быть версия 3.27.x и Dart 3.6+.)
-
-Если ссылка 3.27.1 не сработает, попробуй:
-  flutter_linux_3.26.0-stable.tar.xz
-  или взять актуальную с https://docs.flutter.dev/release/archive
-
---- 2. Собрать веб заново ---
+--- После установки Flutter: собрать веб ---
 
 cd /var/era_shop_web/gogoera
 git fetch origin main && git reset --hard origin/main
@@ -36,9 +46,6 @@ export PATH="/opt/flutter/bin:$PATH"
 /opt/flutter/bin/flutter clean
 /opt/flutter/bin/flutter pub get
 /opt/flutter/bin/flutter build web --release
-
---- 3. Права и Nginx ---
-
 sudo chown -R www-data:www-data /var/era_shop_web/gogoera/build/web
 sudo chmod -R 755 /var/era_shop_web/gogoera/build/web
 sudo systemctl reload nginx
