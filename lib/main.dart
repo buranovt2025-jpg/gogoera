@@ -12,6 +12,7 @@ import 'package:era_shop/utiles/routes_pages.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -20,6 +21,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:platform_device_id/platform_device_id.dart';
 
 Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     statusBarColor: Colors.transparent,
     systemNavigationBarColor: Colors.transparent,
@@ -29,30 +31,39 @@ Future<void> main() async {
   ErrorWidget.builder = (FlutterErrorDetails details) {
     return Container();
   };
-  FlutterError.onError = (errorDetails) {
-    FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
-  };
-  // Pass all uncaught asynchronous errors that aren't handled by the Flutter framework to Crashlytics
-  PlatformDispatcher.instance.onError = (error, stack) {
-    FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
-    return true;
-  };
 
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  try {
+    await Firebase.initializeApp();
+    FlutterError.onError = (errorDetails) {
+      FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
+    };
+    PlatformDispatcher.instance.onError = (error, stack) {
+      FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+      return true;
+    };
+  } catch (e) {
+    log("Firebase init (web without config?): $e");
+  }
+
   await GetStorage.init();
 
   ///************** IDENTIFY **************************\\\
-  identify = (await PlatformDeviceId.getDeviceId)!;
+  try {
+    identify = (await PlatformDeviceId.getDeviceId) ?? (kIsWeb ? 'web-${DateTime.now().millisecondsSinceEpoch}' : 'unknown');
+  } catch (_) {
+    identify = kIsWeb ? 'web-${DateTime.now().millisecondsSinceEpoch}' : 'unknown';
+  }
   log("Android Id :: $identify");
 
   ///************** FCM token ************************\\\
   try {
-    FirebaseMessaging messaging = FirebaseMessaging.instance;
-    await messaging.getToken().then((value) {
-      fcmToken = value!;
-      log("Fcm Token :: $fcmToken");
-    });
+    if (Firebase.apps.isNotEmpty) {
+      FirebaseMessaging messaging = FirebaseMessaging.instance;
+      await messaging.getToken().then((value) {
+        fcmToken = value!;
+        log("Fcm Token :: $fcmToken");
+      });
+    }
   } catch (e) {
     log("Error FCM token: $e");
   }
