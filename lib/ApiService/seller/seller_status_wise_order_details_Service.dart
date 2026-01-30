@@ -14,14 +14,14 @@ class SellerStatusWiseOrderDetailsApi extends GetxService {
     required String endDate,
     required String status,
   }) async {
-    String uri= Constant.getDomainFromURL(Constant.BASE_URL);
+    final authority = Constant.getApiAuthority();
     var params = {
       "sellerId": sellerId,
       "status": status,
       "startDate": startDate,
       "endDate": endDate,
     };
-    final url = Uri.https(uri, Constant.orderDetailsForSeller, params);
+    final url = Uri.http(authority, Constant.orderDetailsForSeller, params);
     final headers = {
       'key': Constant.SECRET_KEY,
       'Content-Type': 'application/json; charset=UTF-8',

@@ -12,7 +12,7 @@ class OrderCancelByUserService extends GetxService {
     // required String status,
     required String itemId,
   }) async {
-    String uri= Constant.getDomainFromURL(Constant.BASE_URL);
+    final authority = Constant.getApiAuthority();
     final params = {
       "userId": userId,
       "orderId": orderId,
@@ -20,7 +20,7 @@ class OrderCancelByUserService extends GetxService {
       "itemId": itemId,
     };
     log("Paramsss :: $params");
-    final url = Uri.https(uri, Constant.orderCancelByUser, params);
+    final url = Uri.http(authority, Constant.orderCancelByUser, params);
 
     log("Url :: $url");
 

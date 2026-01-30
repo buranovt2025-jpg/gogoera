@@ -10,12 +10,12 @@ class ReelDeleteService extends GetxService {
   Future<ReelDeleteModel?> deleteReel({
     required String reelId,
   }) async {
-    String uri= Constant.getDomainFromURL(Constant.BASE_URL);
+    final authority = Constant.getApiAuthority();
     final params = {
       "reelId": reelId,
     };
 
-    final url = Uri.https(uri, Constant.sellerReelDelete, params);
+    final url = Uri.http(authority, Constant.sellerReelDelete, params);
 
     log("URL :: $url");
 

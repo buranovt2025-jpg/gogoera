@@ -15,14 +15,14 @@ class UpdateStatusWiseOrderService extends GetxService {
     required String trackingLink,
     required String deliveredServiceName,
   }) async {
-    String uri= Constant.getDomainFromURL(Constant.BASE_URL);
+    final authority = Constant.getApiAuthority();
     final params = {
       "userId": userId,
       "orderId": orderId,
       "status": status,
       "itemId": itemId,
     };
-    final url = Uri.https(uri, Constant.updateOrderStatusBySeller, params);
+    final url = Uri.http(authority, Constant.updateOrderStatusBySeller, params);
     log("Update status by seller url :: $url");
 
     final headers = {

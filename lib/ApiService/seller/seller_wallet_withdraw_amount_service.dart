@@ -10,11 +10,11 @@ import 'package:http/http.dart' as http;
 
 class SellerTotalEarningService extends GetxService {
   Future<SellerTotalEarningModel?> selleTotalEarning() async {
-    String uri= Constant.getDomainFromURL(Constant.BASE_URL);
+    final authority = Constant.getApiAuthority();
     var params = {
       "sellerId": sellerId,
     };
-    final url = Uri.https(uri, Constant.sellerTotalEarning, params);
+    final url = Uri.http(authority, Constant.sellerTotalEarning, params);
 
     final headers = {
       'key': Constant.SECRET_KEY,

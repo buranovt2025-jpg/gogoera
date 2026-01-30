@@ -8,11 +8,11 @@ import 'package:http/http.dart' as http;
 
 class SelectedProductForLiveApi extends GetxService {
   Future<SelectedProductForLiveModel?> selectedProduct() async {
-    String uri= Constant.getDomainFromURL(Constant.BASE_URL);
+    final authority = Constant.getApiAuthority();
     final params = {
       "sellerId": sellerId,
     };
-    final url = Uri.https(uri, Constant.selectedProductForLive, params);
+    final url = Uri.http(authority, Constant.selectedProductForLive, params);
 
     final headers = {
       'key': Constant.SECRET_KEY,

@@ -8,12 +8,12 @@ import 'package:http/http.dart' as http;
 
 class ProductCategoryApi extends GetxService {
   Future<ProductCategory> productCategory() async {
-    String uri= Constant.getDomainFromURL(Constant.BASE_URL);
+    final authority = Constant.getApiAuthority();
     final params = {
       "userId": userId,
     };
 
-    final url = Uri.https(uri, Constant.userProfile, params);
+    final url = Uri.http(authority, Constant.userProfile, params);
 
     final headers = {
       'key': Constant.SECRET_KEY,

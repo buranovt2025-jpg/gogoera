@@ -41,9 +41,9 @@ class GetReelsForUserController extends GetxController {
     try {
       isLoading(true);
       loadOrNot(true);
-      String uri= Constant.getDomainFromURL(Constant.BASE_URL);
+      final authority = Constant.getApiAuthority();
       var params = {"start": "$start", "limit": "$limit", "userId": userId};
-      final url = Uri.https(uri, Constant.getShortForUser, params);
+      final url = Uri.http(authority, Constant.getShortForUser, params);
 
 
 
@@ -94,9 +94,9 @@ class GetReelsForUserController extends GetxController {
     try {
       moreLoading(true);
       loadOrNot(true);
-      String uri= Constant.getDomainFromURL(Constant.BASE_URL);
+      final authority = Constant.getApiAuthority();
       var params = {"start": "$start", "limit": "$limit", "userId": userId};
-      final url = Uri.https(uri, Constant.getShortForUser, params);
+      final url = Uri.http(authority, Constant.getShortForUser, params);
       log("Short Url :: $url");
 
       final headers = {
@@ -140,13 +140,9 @@ class GetReelsForUserController extends GetxController {
 
   likeAndDislikeByUser({required String reelId}) async {
     try {
-      String uri= Constant.getDomainFromURL(Constant.BASE_URL);
-      var params = {
-        "userId": userId,
-        "reelId": reelId,
-      };
-
-      final url = Uri.https(uri, Constant.shortsLikeAndDislike, params);
+      final authority = Constant.getApiAuthority();
+      var params = {"userId": userId, "reelId": reelId};
+      final url = Uri.http(authority, Constant.shortsLikeAndDislike, params);
 
       log('URL :: $url');
 

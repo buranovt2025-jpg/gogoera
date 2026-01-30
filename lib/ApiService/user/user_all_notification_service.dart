@@ -10,8 +10,8 @@ class GetAllNotifications extends GetxService {
   Future<GetAllNotificationsModel?> getNotification() async {
     try {
       final params = {"userId": userId};
-      String uri= Constant.getDomainFromURL(Constant.BASE_URL);
-      final url = Uri.https(uri, Constant.allNotificationList, params);
+      final authority = Constant.getApiAuthority();
+      final url = Uri.http(authority, Constant.allNotificationList, params);
 
       final headers = {
         'key': Constant.SECRET_KEY,

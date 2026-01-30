@@ -10,8 +10,8 @@ import '../../utiles/api_url.dart';
 class RemoveAllProductFromCartService extends GetxService {
   Future<RemoveAllProductFromCartModel?> removeAllProduct() async {
     final params = {"userId": userId};
-    String uri= Constant.getDomainFromURL(Constant.BASE_URL);
-    final url = Uri.https(uri, Constant.deleteAllCartProduct, params);
+    final authority = Constant.getApiAuthority();
+    final url = Uri.http(authority, Constant.deleteAllCartProduct, params);
 
     final headers = {
       'key': Constant.SECRET_KEY,

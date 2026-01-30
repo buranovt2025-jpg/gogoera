@@ -10,12 +10,12 @@ class GetAllCartProductApi extends GetxService {
   Future<GetAllCartProductsModel?> getAllCartProductDetails({
     required String userId,
   }) async {
-    String uri= Constant.getDomainFromURL(Constant.BASE_URL);
+    final authority = Constant.getApiAuthority();
     var params = {
       "userId": userId,
     };
 
-    final url = Uri.https(uri, Constant.getAllCartProducts, params);
+    final url = Uri.http(authority, Constant.getAllCartProducts, params);
     log("URL :: $url");
 
     final headers = {

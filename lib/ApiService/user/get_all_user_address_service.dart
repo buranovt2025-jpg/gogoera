@@ -9,9 +9,9 @@ import '../../utiles/api_url.dart';
 
 class GetAllUserAddressApi extends GetxService {
   Future<GetAllUserAddressModel?> getAllAddress() async {
-    String uri= Constant.getDomainFromURL(Constant.BASE_URL);
+    final authority = Constant.getApiAuthority();
     final params = {"userId": userId};
-    final url = Uri.https(uri, Constant.getAllAddress, params);
+    final url = Uri.http(authority, Constant.getAllAddress, params);
 
     final headers = {
       'key': Constant.SECRET_KEY,

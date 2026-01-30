@@ -8,11 +8,11 @@ import '../../utiles/globle_veriables.dart';
 
 class DeliveredOrderAmountService extends GetxService {
   Future<DeliveredOrderAmountModel?> sellerWalletReceivedAmountDetails() async {
-    String uri= Constant.getDomainFromURL(Constant.BASE_URL);
+    final authority = Constant.getApiAuthority();
     var params = {
       "sellerId": sellerId,
     };
-    final url = Uri.https(uri, Constant.deliveredOrderAmountForSeller, params);
+    final url = Uri.http(authority, Constant.deliveredOrderAmountForSeller, params);
 
     final headers = {
       'key': Constant.SECRET_KEY,

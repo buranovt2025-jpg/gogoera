@@ -10,12 +10,12 @@ class SellerProductDetailsApi extends GetxService {
     required String productId,
     required String sellerId,
   }) async {
-    String uri= Constant.getDomainFromURL(Constant.BASE_URL);
+    final authority = Constant.getApiAuthority();
     var params = {
       "productId": productId,
       "sellerId": sellerId,
     };
-    final url = Uri.https(uri, Constant.sellerProductDetails, params);
+    final url = Uri.http(authority, Constant.sellerProductDetails, params);
 
     final headers = {
       'key': Constant.SECRET_KEY,

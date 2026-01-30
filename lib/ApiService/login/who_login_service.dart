@@ -9,11 +9,11 @@ import 'package:http/http.dart' as http;
 
 class WhoLoginApi extends GetxService {
   Future<WhoLoginModel> whoLogin() async {
-   String uri= Constant.getDomainFromURL(Constant.BASE_URL);
+   final authority = Constant.getApiAuthority();
     final params = {
       "userId": userId,
     };
-    final url = Uri.https(uri, Constant.userProfile, params);
+    final url = Uri.http(authority, Constant.userProfile, params);
 
     log("Url :: $url");
 

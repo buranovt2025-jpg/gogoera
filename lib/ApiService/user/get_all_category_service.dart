@@ -8,8 +8,8 @@ import '../../ApiModel/user/GetAllCategoryModel.dart';
 
 class GetAllCategoryApi extends GetxService {
   Future<GetAllCategoryModel?> showCategory() async {
-    String uri= Constant.getDomainFromURL(Constant.BASE_URL);
-    final url = Uri.https(uri, Constant.getAllCategory);
+    final authority = Constant.getApiAuthority();
+    final url = Uri.http(authority, Constant.getAllCategory);
 
     final headers = {
       'key': Constant.SECRET_KEY,

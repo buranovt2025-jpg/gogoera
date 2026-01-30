@@ -8,12 +8,12 @@ import '../../utiles/api_url.dart';
 class FAQApi extends GetxService {
   Future<FaqModel?> showFAQ() async {
     try {
-      String uri= Constant.getDomainFromURL(Constant.BASE_URL);
+      final authority = Constant.getApiAuthority();
       final headers = {
         'key': Constant.SECRET_KEY,
         'Content-Type': 'application/json; charset=UTF-8',
       };
-      final url = Uri.https(uri, Constant.faq);
+      final url = Uri.http(authority, Constant.faq);
 
       final response = await http.get(url, headers: headers);
 

@@ -13,12 +13,12 @@ class CreateOrderByUserApi extends GetxService {
     required String paymentGateway,
     required String promoCode,
     required double finalTotal,
-  }) async {String uri= Constant.getDomainFromURL(Constant.BASE_URL);
+  }) async {final authority = Constant.getApiAuthority();
     final params = {
       "userId": userId,
       "paymentGateway": paymentGateway,
     };
-    final url = Uri.https(uri, Constant.createOrderByUser, params);
+    final url = Uri.http(authority, Constant.createOrderByUser, params);
 
     final body = jsonEncode({
       'promoCode': promoCode,

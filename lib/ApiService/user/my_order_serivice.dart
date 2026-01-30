@@ -10,12 +10,12 @@ class MyOrderApi extends GetxService {
     required String userId,
     required String status,
   }) async {
-    String uri= Constant.getDomainFromURL(Constant.BASE_URL);
+    final authority = Constant.getApiAuthority();
     var params = {
       "userId": userId,
       "status": status,
     };
-    final url = Uri.https(uri, Constant.myOrders, params);
+    final url = Uri.http(authority, Constant.myOrders, params);
 
     final headers = {
       'key': Constant.SECRET_KEY,

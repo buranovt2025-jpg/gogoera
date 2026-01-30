@@ -9,10 +9,10 @@ import 'package:http/http.dart' as http;
 
 class UserAddressSelectApi extends GetxService {
   Future<UserAddressSelectModel> userSelectAddress({required String addressId}) async {
-    String uri= Constant.getDomainFromURL(Constant.BASE_URL);
+    final authority = Constant.getApiAuthority();
     var params = {"addressId": addressId, "userId": userId};
 
-    final url = Uri.https(uri, Constant.userSelectAddress, params);
+    final url = Uri.http(authority, Constant.userSelectAddress, params);
 
     final headers = {
       'key': Constant.SECRET_KEY,

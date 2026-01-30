@@ -9,11 +9,9 @@ import 'package:http/http.dart' as http;
 
 class GetNewCollectionApi extends GetxService {
   Future<GetNewCollectionModel?> showCategory() async {
-    String uri= Constant.getDomainFromURL(Constant.BASE_URL);
-    final params = {
-      "userId": userId,
-    };
-    final url = Uri.https(uri, Constant.newCollection, params);
+    final authority = Constant.getApiAuthority();
+    final params = {"userId": userId};
+    final url = Uri.http(authority, Constant.newCollection, params);
 
     final headers = {
       'key': Constant.SECRET_KEY,

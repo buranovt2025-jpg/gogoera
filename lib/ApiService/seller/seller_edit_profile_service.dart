@@ -20,7 +20,7 @@ class SellerProfileEditApi extends GetxService {
     required String accountNumber,
     required String IFSCCode,
     required String branchName,
-  }) async {String uri= Constant.getDomainFromURL(Constant.BASE_URL);
+  }) async {final authority = Constant.getApiAuthority();
     try {
       log("businessName = $businessName");
       log("businessTag = $businessTag");
@@ -38,7 +38,7 @@ class SellerProfileEditApi extends GetxService {
         "sellerId": sellerId,
       };
 
-      final url = Uri.https(uri, Constant.sellerUpdate, params);
+      final url = Uri.http(authority, Constant.sellerUpdate, params);
       log("sellerurl:$url");
 
       var request = http.MultipartRequest("PATCH", url);

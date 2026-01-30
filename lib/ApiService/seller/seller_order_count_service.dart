@@ -12,13 +12,13 @@ class SellerOrderCountApi extends GetxService{
     required String startDate,
     required String endDate,
   }) async {
-    String uri= Constant.getDomainFromURL(Constant.BASE_URL);
+    final authority = Constant.getApiAuthority();
     var params = {
       "sellerId": sellerId,
       "startDate": startDate,
       "endDate": endDate,
     };
-    final url = Uri.http(uri, Constant.orderCountForSeller, params);
+    final url = Uri.http(authority, Constant.orderCountForSeller, params);
 
     final headers = {
       'key': Constant.SECRET_KEY,

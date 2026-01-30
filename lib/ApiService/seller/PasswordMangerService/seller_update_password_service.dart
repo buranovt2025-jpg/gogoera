@@ -12,10 +12,10 @@ class SellerUpdatePasswordService extends GetxService {
     required String newPass,
     required String confirmPass,
   }) async {
-    String uri= Constant.getDomainFromURL(Constant.BASE_URL);
+    final authority = Constant.getApiAuthority();
     var params = {"sellerId": sellerId};
 
-    final url = Uri.https(uri, Constant.updatePasswordBySeller, params);
+    final url = Uri.http(authority, Constant.updatePasswordBySeller, params);
 
     final headers = {
       'key': Constant.SECRET_KEY,

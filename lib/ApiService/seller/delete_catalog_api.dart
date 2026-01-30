@@ -9,12 +9,12 @@ class DeleteCatalogApi extends GetxService {
   Future<DeleteCatalogBySellerModel?> deleteCatalog({
     required String productId,
   }) async {
-    String uri= Constant.getDomainFromURL(Constant.BASE_URL);
+    final authority = Constant.getApiAuthority();
     final params = {
       "productId": productId,
     };
 
-    final url = Uri.https(uri, Constant.sellerProductDelete, params);
+    final url = Uri.http(authority, Constant.sellerProductDelete, params);
 
     final headers = {
       'key': Constant.SECRET_KEY,

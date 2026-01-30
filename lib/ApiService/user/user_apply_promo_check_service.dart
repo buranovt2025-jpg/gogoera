@@ -9,7 +9,7 @@ import '../../utiles/globle_veriables.dart';
 class UserApplyPromoCheckApi extends GetxService {
   Future<UserApplyPromoCheckModel> userApplyPromoCheck({
     required String promocodeId,
-  }) async {String uri= Constant.getDomainFromURL(Constant.BASE_URL);
+  }) async {final authority = Constant.getApiAuthority();
     final params = {
       "promocodeId": promocodeId,
       "userId": userId,
@@ -17,7 +17,7 @@ class UserApplyPromoCheckApi extends GetxService {
 
     log("Promo id :: $promocodeId");
     log("UUUser id :: $userId");
-    final url = Uri.https(uri, Constant.userApplyPromoCheck, params);
+    final url = Uri.http(authority, Constant.userApplyPromoCheck, params);
 
     final headers = {
       'key': Constant.SECRET_KEY,

@@ -12,10 +12,10 @@ class UpdatePasswordService extends GetxService {
     required String newPass,
     required String confirmPass,
   }) async {
-    String uri= Constant.getDomainFromURL(Constant.BASE_URL);
+    final authority = Constant.getApiAuthority();
     var params = {"userId": userId};
 
-    final url = Uri.https(uri, Constant.updatePasswordByUser, params);
+    final url = Uri.http(authority, Constant.updatePasswordByUser, params);
 
     final headers = {
       'key': Constant.SECRET_KEY,

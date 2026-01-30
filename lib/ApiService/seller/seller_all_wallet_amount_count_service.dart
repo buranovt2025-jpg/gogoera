@@ -9,13 +9,13 @@ import '../../utiles/globle_veriables.dart';
 
 class SellerAllWalletAmountCountApi extends GetxService {
   Future<SellerAllWalletAmountCountModel?> sellerAllWalletAmountCountDetails() async {
-    String uri= Constant.getDomainFromURL(Constant.BASE_URL);
+    final authority = Constant.getApiAuthority();
     var params = {
       "sellerId": sellerId,
       // "startDate": startDate,
       // "endDate": endDate,
     };
-    final url = Uri.https(uri, Constant.walletCountForSeller, params);
+    final url = Uri.http(authority, Constant.walletCountForSeller, params);
 
     final headers = {
       'key': Constant.SECRET_KEY,

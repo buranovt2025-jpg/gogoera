@@ -13,12 +13,12 @@ class LiveSellerListService extends GetxService {
     required String limit,
   }) async {
     try {
-      String uri= Constant.getDomainFromURL(Constant.BASE_URL);
+      final authority = Constant.getApiAuthority();
       var params = {
         "start": start,
         "limit": limit,
       };
-      final url = Uri.https(uri, Constant.liveSellerList, params);
+      final url = Uri.http(authority, Constant.liveSellerList, params);
 
       final headers = {
         'key': Constant.SECRET_KEY,

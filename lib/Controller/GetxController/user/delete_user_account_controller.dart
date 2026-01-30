@@ -17,10 +17,10 @@ class DeleteUserAccountController extends GetxController {
         color: Colors.red,
       ),
     ));
-    String uri= Constant.getDomainFromURL(Constant.BASE_URL);
+    final authority = Constant.getApiAuthority();
     try {
       final queryParameters = {"userId": userId};
-      final url = Uri.https(uri, Constant.deleteAccount, queryParameters);
+      final url = Uri.http(authority, Constant.deleteAccount, queryParameters);
       log("Delete Account url ::$url");
       final header = {"Key": Constant.SECRET_KEY};
       var response = await http.delete(url, headers: header);

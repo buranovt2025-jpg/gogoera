@@ -16,14 +16,14 @@ class GalleryCategoryApi extends GetxService {
     log("userId :: $userId");
     log("Start :: $start");
     log("Limit :: $limit");
-    String uri= Constant.getDomainFromURL(Constant.BASE_URL);
+    final authority = Constant.getApiAuthority();
     final params = {
       "categoryId": categoryId,
       "userId": userId,
       "start": start,
       "limit": limit,
     };
-    final url = Uri.https(uri, Constant.galleryCategory, params);
+    final url = Uri.http(authority, Constant.galleryCategory, params);
 
     final headers = {
       'key': Constant.SECRET_KEY,

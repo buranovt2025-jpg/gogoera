@@ -10,11 +10,11 @@ import 'package:http/http.dart' as http;
 
 class SellerWalletPendingAmountApi extends GetxService {
   Future<PendingOrderAmountModel?> sellerWalletPendingAmountDetails() async {
-    String uri= Constant.getDomainFromURL(Constant.BASE_URL);
+    final authority = Constant.getApiAuthority();
     var params = {
       "sellerId": sellerId,
     };
-    final url = Uri.https(uri, Constant.pendingWalletAmountForSeller, params);
+    final url = Uri.http(authority, Constant.pendingWalletAmountForSeller, params);
 
     final headers = {
       'key': Constant.SECRET_KEY,

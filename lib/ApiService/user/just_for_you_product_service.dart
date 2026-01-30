@@ -10,11 +10,11 @@ import '../../ApiModel/user/JustForYouProductModel.dart';
 class JustForYouApi extends GetxService {
   Future<JustForYouProductModel?> showProduct() async {
     // final url = Uri.parse(Constant.BASE_URL + Constant.justForYouProduct);
-    String uri = Constant.getDomainFromURL(Constant.BASE_URL);
+    final authority = Constant.getApiAuthority();
     final params = {
       "userId": userId,
     };
-    final url = Uri.https(uri, Constant.justForYouProduct, params);
+    final url = Uri.http(authority, Constant.justForYouProduct, params);
     final headers = {
       'key': Constant.SECRET_KEY,
       'Content-Type': 'application/json; charset=UTF-8',

@@ -11,13 +11,13 @@ class DeleteAddressByUserService extends GetxService {
     required String addressId,
   }) async {
     try {
-      String uri= Constant.getDomainFromURL(Constant.BASE_URL);
+      final authority = Constant.getApiAuthority();
       final params = {
         "userId": userId,
         "addressId": addressId,
       };
       log("User id :: $userId");
-      final url = Uri.https(uri, Constant.addressDeleteByUser, params);
+      final url = Uri.http(authority, Constant.addressDeleteByUser, params);
 
       final headers = {
         'key': Constant.SECRET_KEY,

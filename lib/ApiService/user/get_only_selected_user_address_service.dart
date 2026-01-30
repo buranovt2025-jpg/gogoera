@@ -9,11 +9,11 @@ import '../../utiles/globle_veriables.dart';
 
 class GetOnlySelectedUserAddressApi extends GetxService{
   Future<UserAddressSelectModel?> getOnlySelectedAddress() async {
-    String uri= Constant.getDomainFromURL(Constant.BASE_URL);
+    final authority = Constant.getApiAuthority();
     final params = {
       "userId" : userId
     };
-    final url = Uri.https(uri, Constant.getOnlySelectedAddress,params);
+    final url = Uri.http(authority, Constant.getOnlySelectedAddress,params);
 
 
     final headers = {

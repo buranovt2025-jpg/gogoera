@@ -10,13 +10,13 @@ import 'package:http/http.dart' as http;
 class FavoriteItemApi extends GetxService {
   Future<FavoriteItemsModel?> showFavoriteItem() async {
     try {
-      String uri= Constant.getDomainFromURL(Constant.BASE_URL);
+      final authority = Constant.getApiAuthority();
       final params = {
         "userId": userId,
         // "categoryId": categoryId,
       };
 
-      final url = Uri.https(uri, Constant.favoriteProducts, params);
+      final url = Uri.http(authority, Constant.favoriteProducts, params);
 
       final headers = {
         'key': Constant.SECRET_KEY,

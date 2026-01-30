@@ -18,13 +18,13 @@ class UserUpdateAddressApi extends GetxService {
     required String zipCode,
     required String address,
   }) async {
-    String uri= Constant.getDomainFromURL(Constant.BASE_URL);
+    final authority = Constant.getApiAuthority();
     var params = {
       "addressId": addressId,
     };
 
     final url =
-        Uri.https(uri, Constant.userUpdateAddress, params);
+        Uri.http(authority, Constant.userUpdateAddress, params);
     log("url$url");
 
     final body = jsonEncode({

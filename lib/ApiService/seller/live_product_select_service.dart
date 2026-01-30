@@ -9,13 +9,13 @@ class LiveProductSelectApi extends GetxService {
   Future<LiveProductSelect?> liveProductSelect({
     required String productId,
   }) async {
-    String uri= Constant.getDomainFromURL(Constant.BASE_URL);
+    final authority = Constant.getApiAuthority();
     try {
       final params = {
         "productId": productId,
       };
 
-      final url = Uri.https(uri, Constant.productSelectOrNot, params);
+      final url = Uri.http(authority, Constant.productSelectOrNot, params);
 
       var request = http.MultipartRequest("PATCH", url);
 

@@ -88,6 +88,9 @@ class Constant {
   static const deleteAccount = "/user/deleteUserAccount";
   static const getAllBank = "bank/getBanks";
 
+  /// Host:port для API (например 146.190.238.186:5000). Использовать с Uri.http().
+  static String getApiAuthority() => Uri.parse(BASE_URL).authority;
+
   static String getDomainFromURL(String url) {
     final uri = Uri.parse(url);
     String host = uri.host;

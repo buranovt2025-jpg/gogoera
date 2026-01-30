@@ -15,12 +15,12 @@ class GetFilterWiseProductService extends GetxService {
     required int minPrice,
     required int maxPrice,
   }) async {
-    String uri= Constant.getDomainFromURL(Constant.BASE_URL);
+    final authority = Constant.getApiAuthority();
     final params = {
       "userId": userId,
     };
 
-    final url = Uri.https(uri, Constant.filterWiseProduct, params);
+    final url = Uri.http(authority, Constant.filterWiseProduct, params);
 
     final body =
         jsonEncode({"category": category, "subCategory": subCategory, "minPrice": minPrice, "maxPrice": maxPrice});

@@ -10,13 +10,13 @@ import 'package:http/http.dart' as http;
 
 class UserSearchProductApi extends GetxService {
   Future<UserSearchProductModel?> userSearchProductDetails({required String productName}) async {
-    String uri = Constant.getDomainFromURL(Constant.BASE_URL);
+    final authority = Constant.getApiAuthority();
     final params = {
       'productName': productName,
       "userId": userId,
     };
     // final url = Uri.parse(Constant.BASE_URL + Constant.searchProduct);
-    final url = Uri.https(uri, Constant.searchProduct, params);
+    final url = Uri.http(authority, Constant.searchProduct, params);
 
     log("URL :: $url");
     final headers = {

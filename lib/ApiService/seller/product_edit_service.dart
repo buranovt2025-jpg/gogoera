@@ -23,14 +23,14 @@ class ProductEditApi extends GetxService {
   }) async {
     log("Edit Attributes json encode :: ${json.encode(attributes)}");
     log("Product Code Service:: $productCode");
-    String uri= Constant.getDomainFromURL(Constant.BASE_URL);
+    final authority = Constant.getApiAuthority();
     var params = {
       "productId": productId,
       "sellerId": sellerId,
       "productCode": productCode,
     };
 
-    final url = Uri.https(uri, Constant.updateProductBySeller, params);
+    final url = Uri.http(authority, Constant.updateProductBySeller, params);
 
     var request = http.MultipartRequest("POST", url);
 

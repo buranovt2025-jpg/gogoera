@@ -11,13 +11,13 @@ class ShowCatalogApi extends GetxService {
     required String start,
     required String limit,
   }) async {
-    String uri= Constant.getDomainFromURL(Constant.BASE_URL);
+    final authority = Constant.getApiAuthority();
     var params = {
       "start": start,
       "limit": limit,
       "sellerId": sellerId,
     };
-    final url = Uri.https(uri, Constant.allProductForSeller, params);
+    final url = Uri.http(authority, Constant.allProductForSeller, params);
 
     log('URL :: $url');
 

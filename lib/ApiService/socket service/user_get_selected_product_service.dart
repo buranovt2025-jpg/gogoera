@@ -9,10 +9,10 @@ class UserGetSelectedProductService extends GetxService {
   Future<UserGetSelectedProductModel> selectedProducts({
     required String roomId,
   }) async {
-    String uri= Constant.getDomainFromURL(Constant.BASE_URL);
+    final authority = Constant.getApiAuthority();
     final params = {"liveSellingHistoryId": roomId};
 
-    final url = Uri.https(uri, Constant.getSelectedProductForUser, params);
+    final url = Uri.http(authority, Constant.getSelectedProductForUser, params);
 
     final headers = {
       'key': Constant.SECRET_KEY,

@@ -13,8 +13,8 @@ class GetReviewApi extends GetxService {
     var params = {
       "productId": productId,
     };
-    String uri= Constant.getDomainFromURL(Constant.BASE_URL);
-    final url = Uri.https(uri, Constant.getReviewDetails, params);
+    final authority = Constant.getApiAuthority();
+    final url = Uri.http(authority, Constant.getReviewDetails, params);
 
     log("URL :: $url");
     final headers = {
