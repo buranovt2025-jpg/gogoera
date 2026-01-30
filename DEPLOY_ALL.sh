@@ -68,7 +68,7 @@ sed -i 's/image_picker_platform_interface: 2.11.1/image_picker_platform_interfac
 rm -f pubspec.lock
 /opt/flutter/bin/flutter clean
 /opt/flutter/bin/flutter pub get
-/opt/flutter/bin/flutter build web --release --no-service-worker
+/opt/flutter/bin/flutter build web --release
 
 echo "=== [7/8] Nginx ==="
 sudo tee /etc/nginx/sites-available/era_shop_web << 'NGINX'
