@@ -1,0 +1,90 @@
+# Сборка и деплой (DigitalOcean)
+
+## Что собираем
+
+| Компонент | Где | Действие |
+|-----------|-----|----------|
+| **Мобильное приложение** | этот репозиторий (Flutter) | `flutter build apk` / `flutter build appbundle` |
+| **Веб-версия приложения** | этот репозиторий | `flutter build web` → выложить в `backend/public` или на CDN |
+| **Backend + Admin** | архив era-shop-v2 (Source Code: backend, admin.zip, DB, install.sh) | Деплой на сервер (Node.js, MongoDB, Nginx) |
+
+Перед сборкой в приложении обязательно задать **BASE_URL** и **SECRET_KEY** в `lib/utiles/api_url.dart`.
+
+---
+
+## Размер дроплета на DigitalOcean
+
+Для **backend + MongoDB + Nginx + Admin** (по скрипту install.sh из era-shop-v2):
+
+| Назначение | План | RAM | vCPU | Цена (примерно) |
+|------------|------|-----|------|------------------|
+| **Минимум (тест/разработка)** | Basic, 2 GB | 2 GB | 1 | ~12 $/мес |
+| **Рекомендуемый (продакшен)** | Basic, 4 GB | 4 GB | 2 | ~24 $/мес |
+| **С запасом (трафик, рилсы, live)** | Basic, 8 GB | 8 GB | 4 | ~48 $/мес |
+
+**Рекомендация:** начать с **4 GB** — MongoDB и Node комфортно работают, остаётся запас под трафик и сборки. Если бюджет жёсткий — можно **2 GB**, но под мониторингом памяти.
+
+Регион: ближайший к пользователям (например Frankfurt или Amsterdam для СНГ/Европы).
+
+---
+
+## Подготовка к сборке (локально)
+
+```bash
+# 1. Клонировать
+git clone https://github.com/buranovt2025-jpg/gogoera.git
+cd gogoera
+
+# 2. Настроить API (обязательно)
+# Открыть lib/utiles/api_url.dart и задать:
+#   BASE_URL = "https://ваш-домен.com/";   // или IP дроплета
+#   SECRET_KEY = "ваш_секретный_ключ";
+
+# 3. Зависимости
+flutter pub get
+
+# 4. Сборка Android (APK)
+flutter build apk --release
+
+# 4b. Сборка веб (для выкладки на сервер)
+flutter build web --release
+# Результат: build/web/ — скопировать на сервер в backend/public или раздавать через Nginx
+```
+
+APK будет в `build/app/outputs/flutter-apk/app-release.apk`.
+
+---
+
+## Деплой backend на DigitalOcean
+
+1. **Создать дроплет**  
+   - Ubuntu 22.04 LTS  
+   - Размер: **4 GB RAM** (или 2 GB для теста)  
+   - Добавить SSH-ключ.
+
+2. **Залить исходники backend**  
+   Из архива era-shop-v2: папки backend, frontend (admin), DB, скрипт install.sh.
+
+3. **Запустить установку** (на сервере):
+   ```bash
+   chmod +x install.sh
+   ./install.sh
+   ```
+   Скрипт спросит: домен, имя приложения, секретные ключи; установит Node.js, Nginx, MongoDB, PM2, соберёт админку и настроит backend.
+
+4. **Домен и SSL**  
+   Указать A-запись домена на IP дроплета. В install.sh будет предложен certbot (Let's Encrypt) для HTTPS.
+
+5. **В приложении**  
+   В `api_url.dart` указать `BASE_URL = "https://ваш-домен.com/"` и тот же `SECRET_KEY`, что на бэкенде.
+
+---
+
+## Чек-лист перед сборкой
+
+- [ ] В `lib/utiles/api_url.dart` заданы BASE_URL и SECRET_KEY
+- [ ] Backend уже развёрнут и доступен по BASE_URL (или сначала деплой, потом сборка приложения)
+- [ ] Для Android: при необходимости подставлен свой `google-services.json`
+- [ ] Для веб: после `flutter build web` папку `build/web` выложить на тот же домен или поддомен
+
+После этого можно проводить сборку (APK / web) и деплой на DigitalOcean по шагам выше.
