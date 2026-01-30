@@ -78,9 +78,20 @@ class _SignInState extends State<SignIn> {
                                 physics: const BouncingScrollPhysics(),
                                 child: Column(
                                   children: [
-                                    const SizedBox(
-                                      height: 40,
+                                    const SizedBox(height: 16),
+                                    // Войти без аккаунта — сразу в приложение
+                                    TextButton(
+                                      onPressed: () => Get.offAllNamed("/BottomTabBar"),
+                                      child: Text(
+                                        "Смотреть без входа",
+                                        style: GoogleFonts.plusJakartaSans(
+                                          fontSize: 15,
+                                          color: MyColors.primaryPink,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
                                     ),
+                                    const SizedBox(height: 24),
                                     CommonSignInTextField(
                                       titleText: St.emailTextFieldTitle.tr,
                                       hintText: St.emailTextFieldHintText.tr,
