@@ -97,7 +97,6 @@ class Constant {
     if (host.startsWith("www.")) {
       return host.substring(4);
     }
-    print("object::::::host uri:::$host");
     return host;
   }
 }

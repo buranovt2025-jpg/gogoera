@@ -89,7 +89,6 @@ class SplashScreenController extends GetxController {
 
       //******************************************************
       await settingApiController.getSettingApi();
-      print("stripPublishableKey:::::$stripPublishableKey");
       if (settingApiController.setting?.status == true) {
         stripPublishableKey =
             settingApiController.setting?.setting?.stripePublishableKey ?? "";
@@ -107,11 +106,8 @@ class SplashScreenController extends GetxController {
             settingApiController.setting?.setting?.stripeSwitch ?? false;
         flutterWaveSwitch =
             settingApiController.setting?.setting?.flutterWaveSwitch ?? false;
-        print("stripPublishableKey:::::$stripPublishableKey");
-        print("stripSecrateKey:::::$stripSecrateKey");
-        print("razorPayKey:::::$razorPayKey");
-        print("appSign:::::$appSign");
-        print("appID:::::$appID");
+        log("stripPublishableKey loaded");
+        log("appID: $appID");
       }
 
       await whoLoginController.getUserWhoLoginData();
