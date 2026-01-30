@@ -49,9 +49,12 @@ if [ ! -f "$FLUTTER_DIR/bin/flutter" ] || [ "$REINSTALL" = "1" ]; then
     rm -rf /opt/flutter
     mv /opt/flutter_new /opt/flutter
   fi
+  # иначе Flutter выдаёт 0.0.0-unknown из-за dubious ownership
+  git config --global --add safe.directory /opt/flutter
   echo "export PATH=\"$FLUTTER_DIR/bin:\$PATH\"" >> /root/.bashrc
 fi
 export PATH="$FLUTTER_DIR/bin:$PATH"
+git config --global --add safe.directory /opt/flutter 2>/dev/null || true
 "$FLUTTER_DIR/bin/flutter" --version
 
 # 4. Клонирование и сборка
@@ -63,7 +66,8 @@ if [ ! -d gogoera/.git ]; then
   git clone --depth 1 https://github.com/buranovt2025-jpg/gogoera.git
 fi
 cd gogoera
-git pull --depth 1 || true
+git fetch origin main
+git reset --hard origin/main
 flutter pub get
 flutter build web --release
 

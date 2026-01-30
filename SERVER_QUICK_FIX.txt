@@ -1,0 +1,32 @@
+========================================
+  Быстрый фикс на сервере (скопируй и вставь)
+========================================
+
+Выполни по очереди в SSH (root@146.190.238.186):
+
+--- 1. Разрешить Git использовать /opt/flutter ---
+
+git config --global --add safe.directory /opt/flutter
+
+--- 2. Проверить версию Flutter (должна быть не 0.0.0) ---
+
+/opt/flutter/bin/flutter --version
+
+--- 3. Обновить репозиторий и собрать веб ---
+
+cd /var/era_shop_web/gogoera
+git fetch origin main
+git reset --hard origin/main
+export PATH="/opt/flutter/bin:$PATH"
+/opt/flutter/bin/flutter pub get
+/opt/flutter/bin/flutter build web --release
+
+--- 4. Перезагрузить Nginx ---
+
+sudo nginx -t && sudo systemctl reload nginx
+
+--- 5. Открыть в браузере ---
+
+http://146.190.238.186/
+
+========================================
