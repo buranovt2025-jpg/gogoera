@@ -49,3 +49,7 @@ app.*.map.json
 /ios/.symlinks/
 /ios/Flutter/Flutter.framework
 /ios/Flutter/Flutter.podspec
+
+# Backend (Node)
+/backend/node_modules/
+/backend/storage/

@@ -1,20 +1,10 @@
 # Развёртывание бэкенда Era Shop на сервере
 
-Чтобы в веб-приложении работали товары, корзина, заказы и логин, на сервере должен быть запущен Node.js API (тот же бэкенд, что в **gogoerashop**).
+Бэкенд **уже в репозитории** (папка `backend/`). На сервере достаточно установить Node, MongoDB, PM2 и запустить его.
 
 ---
 
-## 1. Откуда брать бэкенд
-
-Папка с бэкендом на твоём ПК:
-
-- **`C:\Users\buran\gogoerashop\admin\admin\backend`**
-
-Её нужно скопировать на сервер (см. ниже).
-
----
-
-## 2. Установка на сервере (Node, MongoDB, PM2)
+## 1. Установка на сервере (Node, MongoDB, PM2)
 
 Выполни на сервере по SSH **один раз**:
 
@@ -39,58 +29,50 @@ sudo npm install -g pm2
 
 ---
 
-## 3. Копирование бэкенда на сервер
+## 2. Клонирование/обновление репозитория на сервере
 
-**На своём ПК** (PowerShell, в папке с backend):
+Бэкенд лежит в том же репо, что и Flutter-приложение:
 
-```powershell
-scp -r C:\Users\buran\gogoerashop\admin\admin\backend root@146.190.238.186:/var/era_shop_web/
+```bash
+cd /var/era_shop_web
+git clone https://github.com/buranovt2025-jpg/gogoera.git
+# или, если папка уже есть:
+cd /var/era_shop_web/gogoera
+git fetch origin main && git reset --hard origin/main
 ```
 
-(Если `scp` нет — можно упаковать папку в zip, залить на сервер и распаковать там.)
+Папка `backend/` будет в `gogoera/backend/`.
 
 ---
 
-## 4. Конфиг бэкенда на сервере
+## 3. Конфиг бэкенда
 
-На сервере:
+В репозитории уже есть `backend/config.js` с настройками под сервер (BASE_URL, secretKey). При необходимости поправь на сервере:
 
 ```bash
-cd /var/era_shop_web/backend
+cd /var/era_shop_web/gogoera/backend
 nano config.js
 ```
 
-Вставь (подставь свой пароль MongoDB и при необходимости домен):
-
-```js
-module.exports = {
-  PORT: 5000,
-  baseURL: "http://146.190.238.186:5000/",
-  secretKey: "5TIvw5cpc0",
-  JWT_SECRET: "2FhKmINItB",
-  MONGODB_CONNECTION_STRING: "mongodb://127.0.0.1:27017/erashop"
-};
-```
-
-Сохрани (Ctrl+O, Enter, Ctrl+X).
+Проверь `MONGODB_CONNECTION_STRING` (по умолчанию `mongodb://127.0.0.1:27017/erashop`).
 
 ---
 
-## 5. Запуск бэкенда
+## 4. Запуск бэкенда
 
 ```bash
-cd /var/era_shop_web/backend
+cd /var/era_shop_web/gogoera/backend
 npm install
 pm2 start index.js --name era-backend
 pm2 save
 pm2 startup
 ```
 
-Проверка: `curl -s http://127.0.0.1:5000/setting` — должен ответить JSON (или ошибка 401 с ключом — это нормально, значит API жив).
+Проверка: `curl -s http://127.0.0.1:5000/setting` — должен ответить JSON (или 401 — значит API жив).
 
 ---
 
-## 6. Открыть порт 5000
+## 5. Открыть порт 5000
 
 ```bash
 sudo ufw allow 5000
@@ -99,7 +81,7 @@ sudo ufw reload
 
 ---
 
-## 7. Приложение (Flutter)
+## 6. Приложение (Flutter)
 
 В приложении уже прописано:
 
@@ -119,7 +101,7 @@ sudo systemctl reload nginx
 
 ---
 
-## 8. Первые данные (категории, настройки)
+## 7. Первые данные (категории, настройки)
 
 - Админка Era Shop (отдельный проект) подключается к этому же API и создаёт категории, товары, настройки.
 - Либо можно импортировать данные из папки **DB** исходного Era Shop (например `settings.json`, `attributes.json`) в MongoDB вручную или скриптом.
