@@ -58,6 +58,7 @@ class _HomePageNewCollectionState extends State<HomePageNewCollection> {
               height: 225,
               child: GetBuilder<NewCollectionController>(
                   builder: (NewCollectionController controller) {
+                final productsList = controller.getNewCollection?.products ?? [];
                 return Obx(
                   () => controller.isLoading.value
                       ? Shimmers.listViewProductHorizontal()
@@ -66,11 +67,9 @@ class _HomePageNewCollectionState extends State<HomePageNewCollection> {
                           padding: const EdgeInsets.only(left: 18),
                           scrollDirection: Axis.horizontal,
                           physics: const BouncingScrollPhysics(),
-                          itemCount:
-                              controller.getNewCollection!.products!.length,
+                          itemCount: productsList.length,
                           itemBuilder: (context, index) {
-                            var products =
-                                controller.getNewCollection!.products![index];
+                            var products = productsList[index];
                             return Padding(
                               padding: const EdgeInsets.only(right: 10),
                               child: GestureDetector(
@@ -500,19 +499,20 @@ class _HomepageJustForYouState extends State<HomepageJustForYou> {
               )
             : const SizedBox.shrink(),
         Obx(
-          () => SizedBox(
+          () {
+            final justForYouList = justForYouProductController
+                .justForYouProduct?.justForYouProducts ?? [];
+            return SizedBox(
             child: justForYouProductController.isLoading.value
                 ? Shimmers.justForYouProductsShimmer()
                     .paddingSymmetric(vertical: 8, horizontal: 15)
                 : ListView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
-                    itemCount: justForYouProductController
-                        .justForYouProduct!.justForYouProducts!.length,
+                    itemCount: justForYouList.length,
                     scrollDirection: Axis.vertical,
                     itemBuilder: (context, index) {
-                      var products = justForYouProductController
-                          .justForYouProduct!.justForYouProducts![index];
+                      var products = justForYouList[index];
                       return Padding(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 15, vertical: 5),
@@ -632,7 +632,8 @@ class _HomepageJustForYouState extends State<HomepageJustForYou> {
                       );
                     },
                   ),
-          ),
+            );
+          },
         )
       ],
     );

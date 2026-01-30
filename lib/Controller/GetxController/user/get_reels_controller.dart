@@ -66,12 +66,13 @@ class GetReelsForUserController extends GetxController {
         likeCounts.clear();
         final jsonResponse = json.decode(response.body);
         getReelsForUser = GetReelsForUserModel.fromJson(jsonResponse);
+        final reelsList = getReelsForUser?.reels ?? [];
 
-        allReels.addAll(getReelsForUser!.reels!);
+        allReels.addAll(reelsList);
 
-        for (int i = 0; i < getReelsForUser!.reels!.length; i++) {
-          likeDislikes.add(getReelsForUser!.reels![i].isLike);
-          likeCounts.add(getReelsForUser!.reels![i].like!.toInt());
+        for (int i = 0; i < reelsList.length; i++) {
+          likeDislikes.add(reelsList[i].isLike);
+          likeCounts.add((reelsList[i].like ?? 0).toInt());
         }
 
         if (allReels.isEmpty) {
@@ -114,14 +115,15 @@ class GetReelsForUserController extends GetxController {
       if (response.statusCode == 200) {
         final jsonResponse = json.decode(response.body);
         getReelsForUser = GetReelsForUserModel.fromJson(jsonResponse);
+        final reelsList = getReelsForUser?.reels ?? [];
 
-        allReels.addAll(getReelsForUser!.reels!);
+        allReels.addAll(reelsList);
 
-        for (int i = 0; i < getReelsForUser!.reels!.length; i++) {
-          likeDislikes.add(getReelsForUser!.reels![i].isLike);
-          likeCounts.add(getReelsForUser!.reels![i].like!.toInt());
+        for (int i = 0; i < reelsList.length; i++) {
+          likeDislikes.add(reelsList[i].isLike);
+          likeCounts.add((reelsList[i].like ?? 0).toInt());
         }
-        if (getReelsForUser!.reels!.isEmpty) {
+        if (reelsList.isEmpty) {
           loadOrNot(false);
           displayToast(message: "No more shorts!");
         } else {
