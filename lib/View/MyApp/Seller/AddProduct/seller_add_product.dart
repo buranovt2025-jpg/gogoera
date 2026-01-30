@@ -34,8 +34,8 @@ class _AddProductState extends State<AddProduct> {
   GetAllCategoryController getAllCategoryController = Get.put(GetAllCategoryController());
   AttributesAddProductController attributesAddProductController = Get.put(AttributesAddProductController());
 
-  final categoryDropdownController = DropdownController();
-  final subcategoryDropdownController = DropdownController();
+  final categoryDropdownController = DropdownController<String>();
+  final subcategoryDropdownController = DropdownController<String>();
 
   final List<bool> isExpandedOpen = List.generate(100000, (_) => false);
 
