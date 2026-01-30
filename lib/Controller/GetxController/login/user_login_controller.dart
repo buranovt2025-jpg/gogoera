@@ -369,12 +369,13 @@ class UserLoginController extends GetxController {
         return;
       }
       if (checkLoginController.checkUserLogin!.isLogin == true) {
+        final loginEmail = email ?? signInEMailController.text;
         await loginController.getLoginData(
-          email: email ?? signInEMailController.text,
+          email: loginEmail,
           password: password ?? signInPasswordController.text,
           loginType: 3,
           fcmToken: fcmToken,
-          identity: identify,
+          identity: identify.isEmpty ? loginEmail : identify,
           firstName: '',
           lastName: '',
         );
