@@ -143,7 +143,7 @@ class _SignInEmailState extends State<SignInEmail> {
                           padding: const EdgeInsets.only(top: 15),
                           child: CommonSignInButton(
                               onTaped: () {
-                                userLogin.signInSandOtp();
+                                userLogin.signInLogin();
                               },
                               text: St.signInText.tr),
                         ),

@@ -346,87 +346,99 @@ class UserLoginController extends GetxController {
   }
 
   Future<void> signInLogin({String? email, String? password}) async {
-    await checkLoginController.getCheckUserData(
-      email: email ?? signInEMailController.text,
-      password: password ?? signInPasswordController.text,
-      loginType: 3,
-    );
-    if (checkLoginController.checkUserLogin!.isLogin == true) {
-      await loginController.getLoginData(
+    if (signInEMailController.text.isBlank == true || signInPasswordController.text.isBlank == true) {
+      signInEMailValidate = signInEMailController.text.isBlank;
+      signInPasswordValidate = signInPasswordController.text.isBlank;
+      update();
+      return;
+    }
+    if (signInPasswordController.text.length < 8) {
+      signInPasswordLength = true.obs;
+      update();
+      return;
+    }
+    try {
+      signInOtpLoading(true);
+      await checkLoginController.getCheckUserData(
         email: email ?? signInEMailController.text,
         password: password ?? signInPasswordController.text,
         loginType: 3,
-        fcmToken: fcmToken,
-        identity: identify,
-        firstName: '',
-        lastName: '',
       );
-
-      if (loginController.userLogin!.status == true) {
-        Get.defaultDialog(
-          barrierDismissible: false,
-          backgroundColor: isDark.value ? MyColors.blackBackground : MyColors.white,
-          title: "",
-          content: Column(
-            children: [
-              Container(
-                height: 96,
-                width: 96,
-                decoration: const BoxDecoration(color: Colors.green, shape: BoxShape.circle),
-                child: Icon(
-                  Icons.done,
-                  color: isDark.value ? MyColors.blackBackground : MyColors.white,
-                  size: 60,
-                ),
-              ),
-              SizedBox(
-                height: Get.height / 30,
-              ),
-              Text(
-                St.loginSuccessfully.tr,
-                textAlign: TextAlign.center,
-                style: GoogleFonts.plusJakartaSans(
-                    color: isDark.value ? MyColors.white : MyColors.black,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 22),
-              ),
-              // Padding(
-              //   padding: const EdgeInsets.only(top: 15),
-              //   child: Text(
-              //     St.loginSuccessfullySubtitle.tr,
-              //     textAlign: TextAlign.center,
-              //     style: GoogleFonts.plusJakartaSans(
-              //         color: isDark.value ? MyColors.white : MyColors.mediumGrey,
-              //         fontSize: 12,
-              //         fontWeight: FontWeight.w500),
-              //   ),
-              // ),
-              SizedBox(
-                height: Get.height / 30,
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: CommonSignInButton(
-                    onTaped: () {
-                      Get.back();
-                      Get.offAllNamed("/BottomTabBar");
-                    },
-                    text: St.continueText.tr),
-              )
-            ],
-          ),
-        );
-        socketManagerController.socketConnect();
-      } else {
+      if (checkLoginController.checkUserLogin == null) {
         displayToast(message: St.somethingWentWrong.tr);
+        return;
       }
-    } else if (checkLoginController.checkUserLogin!.status == false) {
-      displayToast(message: St.invalidPassword.tr);
-    } else {
-      displayToast(message: St.signUpFirst.tr);
-      Timer(const Duration(seconds: 1), () {
-        Get.toNamed("/SignUp");
-      });
+      if (checkLoginController.checkUserLogin!.isLogin == true) {
+        await loginController.getLoginData(
+          email: email ?? signInEMailController.text,
+          password: password ?? signInPasswordController.text,
+          loginType: 3,
+          fcmToken: fcmToken,
+          identity: identify,
+          firstName: '',
+          lastName: '',
+        );
+
+        if (loginController.userLogin != null && loginController.userLogin!.status == true) {
+          Get.defaultDialog(
+            barrierDismissible: false,
+            backgroundColor: isDark.value ? MyColors.blackBackground : MyColors.white,
+            title: "",
+            content: Column(
+              children: [
+                Container(
+                  height: 96,
+                  width: 96,
+                  decoration: const BoxDecoration(color: Colors.green, shape: BoxShape.circle),
+                  child: Icon(
+                    Icons.done,
+                    color: isDark.value ? MyColors.blackBackground : MyColors.white,
+                    size: 60,
+                  ),
+                ),
+                SizedBox(
+                  height: Get.height / 30,
+                ),
+                Text(
+                  St.loginSuccessfully.tr,
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.plusJakartaSans(
+                      color: isDark.value ? MyColors.white : MyColors.black,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 22),
+                ),
+                SizedBox(
+                  height: Get.height / 30,
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: CommonSignInButton(
+                      onTaped: () {
+                        Get.back();
+                        Get.offAllNamed("/BottomTabBar");
+                      },
+                      text: St.continueText.tr),
+                )
+              ],
+            ),
+          );
+          socketManagerController.socketConnect();
+        } else {
+          displayToast(message: St.somethingWentWrong.tr);
+        }
+      } else if (checkLoginController.checkUserLogin!.status == false) {
+        displayToast(message: St.invalidPassword.tr);
+      } else {
+        displayToast(message: St.signUpFirst.tr);
+        Timer(const Duration(seconds: 1), () {
+          Get.toNamed("/SignUp");
+        });
+      }
+    } catch (e, st) {
+      log("signInLogin error: $e $st");
+      displayToast(message: St.somethingWentWrong.tr);
+    } finally {
+      signInOtpLoading(false);
     }
   }
 

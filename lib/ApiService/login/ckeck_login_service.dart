@@ -24,7 +24,10 @@ class CheckLoginApi extends GetxService {
       "loginType": loginType,
     });
 
-    final response = await http.post(url, body: body, headers: headers);
+    final response = await http.post(url, body: body, headers: headers).timeout(
+      const Duration(seconds: 15),
+      onTimeout: () => throw Exception('Сервер не отвечает'),
+    );
 
     log("Check Login Api Status code ::  ${response.statusCode}");
 
