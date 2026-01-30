@@ -38,8 +38,9 @@ fi
 if [ ! -f "$FLUTTER_DIR/bin/flutter" ] || [ "$REINSTALL" = "1" ]; then
   echo "[3/6] Загрузка Flutter stable для Linux..."
   cd /tmp
-  FLUTTER_URL="https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.24.5-stable.tar.xz"
-  curl -sL "$FLUTTER_URL" -o flutter.tar.xz || { echo "Ошибка загрузки, пробую 3.22.0..."; curl -sL "https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.22.0-stable.tar.xz" -o flutter.tar.xz; }
+  # Dart 3.6+ required for image_picker_platform_interface 2.11+
+  FLUTTER_URL="https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.27.1-stable.tar.xz"
+  curl -sL "$FLUTTER_URL" -o flutter.tar.xz || { echo "Ошибка загрузки 3.27.1, пробую 3.24.5..."; curl -sL "https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.24.5-stable.tar.xz" -o flutter.tar.xz; }
   mkdir -p /opt
   tar xf flutter.tar.xz -C /opt
   rm -f flutter.tar.xz

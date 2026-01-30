@@ -41,6 +41,12 @@ if ! command -v mongod &>/dev/null; then
 fi
 sudo systemctl start mongod 2>/dev/null || true
 sudo systemctl enable mongod 2>/dev/null || true
+sleep 2
+if [ -f "$BACKEND_DIR/DB/attributes.json" ]; then
+  echo "=== [3.5/8] Данные в MongoDB (атрибуты) ==="
+  mongosh mongodb://127.0.0.1:27017/erashop --eval "db.attributes.drop()" 2>/dev/null || true
+  mongoimport --uri="mongodb://127.0.0.1:27017/erashop" --collection=attributes --file="$BACKEND_DIR/DB/attributes.json" --jsonArray 2>/dev/null || true
+fi
 
 echo "=== [4/8] PM2 ==="
 if ! command -v pm2 &>/dev/null; then
