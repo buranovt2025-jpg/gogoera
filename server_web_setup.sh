@@ -22,23 +22,37 @@ else
   echo "[2/6] Swap уже есть"
 fi
 
-# 3. Flutter
+# 3. Flutter (переустановка, если версия 0.0.0-unknown)
 FLUTTER_DIR="/opt/flutter"
-if [ ! -f "$FLUTTER_DIR/bin/flutter" ]; then
-  echo "[3/6] Установка Flutter в $FLUTTER_DIR..."
+REINSTALL=0
+if [ -f "$FLUTTER_DIR/bin/flutter" ]; then
+  VER=$("$FLUTTER_DIR/bin/flutter" --version 2>/dev/null | head -1)
+  if echo "$VER" | grep -q "0.0.0-unknown"; then
+    echo "[3/6] Flutter повреждён (0.0.0-unknown), переустанавливаю..."
+    rm -rf "$FLUTTER_DIR"
+    REINSTALL=1
+  else
+    echo "[3/6] Flutter уже установлен: $VER"
+  fi
+fi
+if [ ! -f "$FLUTTER_DIR/bin/flutter" ] || [ "$REINSTALL" = "1" ]; then
+  echo "[3/6] Загрузка Flutter stable для Linux..."
   cd /tmp
-  curl -sL https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.24.5-stable.tar.xz -o flutter.tar.xz
+  FLUTTER_URL="https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.24.5-stable.tar.xz"
+  curl -sL "$FLUTTER_URL" -o flutter.tar.xz || { echo "Ошибка загрузки, пробую 3.22.0..."; curl -sL "https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.22.0-stable.tar.xz" -o flutter.tar.xz; }
   mkdir -p /opt
   tar xf flutter.tar.xz -C /opt
   rm -f flutter.tar.xz
-  export PATH="$FLUTTER_DIR/bin:$PATH"
+  # если распаковалось в /opt/flutter/flutter — сдвинуть
+  if [ -d /opt/flutter/flutter ]; then
+    mv /opt/flutter/flutter /opt/flutter_new
+    rm -rf /opt/flutter
+    mv /opt/flutter_new /opt/flutter
+  fi
   echo "export PATH=\"$FLUTTER_DIR/bin:\$PATH\"" >> /root/.bashrc
-else
-  echo "[3/6] Flutter уже установлен"
-  export PATH="$FLUTTER_DIR/bin:$PATH"
 fi
 export PATH="$FLUTTER_DIR/bin:$PATH"
-flutter --version
+"$FLUTTER_DIR/bin/flutter" --version
 
 # 4. Клонирование и сборка
 echo "[4/6] Клонирование репозитория и сборка веб..."

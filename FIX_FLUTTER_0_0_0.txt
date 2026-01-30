@@ -1,0 +1,39 @@
+========================================
+  Ошибка: Flutter SDK 0.0.0-unknown
+========================================
+
+На сервере Flutter установлен некорректно. Выполни по шагам в SSH.
+
+--- Вариант 1: Переустановить Flutter и заново запустить скрипт ---
+
+  sudo rm -rf /opt/flutter
+  cd /root
+  curl -sL -o server_web_setup.sh https://raw.githubusercontent.com/buranovt2025-jpg/gogoera/main/server_web_setup.sh
+  chmod +x server_web_setup.sh
+  bash server_web_setup.sh
+
+Скрипт теперь сам удаляет «битый» Flutter и ставит заново.
+
+--- Вариант 2: Только переустановить Flutter, потом собрать вручную ---
+
+  export PATH="/opt/flutter/bin:$PATH"
+  sudo rm -rf /opt/flutter
+  cd /tmp
+  curl -sL -o flutter.tar.xz "https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.24.5-stable.tar.xz"
+  sudo tar xf flutter.tar.xz -C /opt
+  rm -f flutter.tar.xz
+  sudo /opt/flutter/bin/flutter --version
+
+Должна появиться строка с версией (например 3.24.5), а не 0.0.0-unknown.
+
+Потом собрать веб:
+
+  cd /var/era_shop_web/gogoera
+  export PATH="/opt/flutter/bin:$PATH"
+  /opt/flutter/bin/flutter pub get
+  /opt/flutter/bin/flutter build web --release
+  sudo nginx -t && sudo systemctl reload nginx
+
+Открой в браузере: http://146.190.238.186/
+
+========================================
