@@ -11,7 +11,6 @@ import 'package:era_shop/utiles/globle_veriables.dart';
 import 'package:era_shop/utiles/Theme/my_colors.dart';
 import 'package:era_shop/utiles/shimmers.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -21,47 +20,6 @@ import '../../../Controller/GetxController/user/get_reels_controller.dart';
 import '../../Zego/ZegoUtils/permission.dart';
 import '../../Zego/create_engine.dart';
 import '../jump_to_live.dart';
-
-/// На вебе Image.network не дергает CORS; CachedNetworkImage может ломать загрузку.
-Widget _buildProductImage(String imageUrl, double height, double width) {
-  if (imageUrl.trim().isEmpty) {
-    return SizedBox(
-      height: height,
-      width: width,
-      child: Container(
-        color: Colors.grey[300],
-        child: Icon(Icons.image_not_supported_outlined, size: 48, color: Colors.grey[600]),
-      ),
-    );
-  }
-  if (kIsWeb) {
-    return SizedBox(
-      height: height,
-      width: width,
-      child: Image.network(
-        imageUrl,
-        fit: BoxFit.cover,
-        loadingBuilder: (_, child, progress) =>
-            progress == null ? child : Center(child: CupertinoActivityIndicator(animating: true)),
-        errorBuilder: (_, __, ___) => Container(
-          color: Colors.grey[300],
-          child: Icon(Icons.broken_image_outlined, size: 48, color: Colors.grey[600]),
-        ),
-      ),
-    );
-  }
-  return CachedNetworkImage(
-    height: height,
-    width: width,
-    fit: BoxFit.cover,
-    imageUrl: imageUrl,
-    placeholder: (context, url) => const Center(child: CupertinoActivityIndicator(animating: true)),
-    errorWidget: (context, url, error) => Container(
-      color: Colors.grey[300],
-      child: Icon(Icons.broken_image_outlined, size: 48, color: Colors.grey[600]),
-    ),
-  );
-}
 
 class HomePageNewCollection extends StatefulWidget {
   const HomePageNewCollection({Key? key}) : super(key: key);
@@ -133,10 +91,22 @@ class _HomePageNewCollectionState extends State<HomePageNewCollection> {
                                           ClipRRect(
                                             borderRadius:
                                                 BorderRadius.circular(10),
-                                            child: _buildProductImage(
-                                              products.mainImage?.toString() ?? "",
-                                              178,
-                                              double.maxFinite,
+                                            child: CachedNetworkImage(
+                                              height: 178,
+                                              width: double.maxFinite,
+                                              fit: BoxFit.cover,
+                                              imageUrl:
+                                                  products.mainImage.toString(),
+                                              placeholder: (context, url) =>
+                                                  const Center(
+                                                      child:
+                                                          CupertinoActivityIndicator(
+                                                animating: true,
+                                              )),
+                                              errorWidget: (context, url,
+                                                      error) =>
+                                                  const Center(
+                                                      child: Icon(Icons.error)),
                                             ),
                                           ),
                                           Text(
@@ -231,12 +201,12 @@ homePageAppBar() {
               child: Row(
                 children: [
                   SizedBox(
-                    child: (kIsWeb || imageXFile == null)
+                    child: imageXFile == null
                         ? CircleAvatar(
                             radius: 20,
-                            backgroundColor: editImage.trim().isEmpty ? Colors.grey[400] : null,
-                            backgroundImage: editImage.trim().isEmpty ? null : NetworkImage(editImage),
-                            child: editImage.trim().isEmpty ? Icon(Icons.person, color: Colors.white, size: 24) : null,
+                            // backgroundImage:-
+                            //     AssetImage("assets/Home_page_image/profile.png"),
+                            backgroundImage: NetworkImage(editImage),
                           )
                         : CircleAvatar(
                             radius: 20,
@@ -561,10 +531,17 @@ class _HomepageJustForYouState extends State<HomepageJustForYou> {
                               children: [
                                 ClipRRect(
                                   borderRadius: BorderRadius.circular(10),
-                                  child: _buildProductImage(
-                                    products.mainImage?.toString() ?? "",
-                                    Get.height / 8.2,
-                                    Get.width / 4.3,
+                                  child: CachedNetworkImage(
+                                    height: Get.height / 8.2,
+                                    width: Get.width / 4.3,
+                                    fit: BoxFit.cover,
+                                    imageUrl: products.mainImage.toString(),
+                                    placeholder: (context, url) => const Center(
+                                        child: CupertinoActivityIndicator(
+                                      animating: true,
+                                    )),
+                                    errorWidget: (context, url, error) =>
+                                        const Center(child: Icon(Icons.error)),
                                   ),
                                 ),
                                 Expanded(
