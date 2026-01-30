@@ -347,13 +347,13 @@ class UserLoginController extends GetxController {
 
   Future<void> signInLogin({String? email, String? password}) async {
     if (signInEMailController.text.isBlank == true || signInPasswordController.text.isBlank == true) {
-      signInEMailValidate = signInEMailController.text.isBlank;
-      signInPasswordValidate = signInPasswordController.text.isBlank;
+      signInEMailValidate.value = signInEMailController.text.isBlank ?? true;
+      signInPasswordValidate.value = signInPasswordController.text.isBlank ?? true;
       update();
       return;
     }
     if (signInPasswordController.text.length < 8) {
-      signInPasswordLength = true.obs;
+      signInPasswordLength.value = true;
       update();
       return;
     }
