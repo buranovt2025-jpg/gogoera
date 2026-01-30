@@ -30,7 +30,6 @@ class FlutterWaveService {
 
     log("Flutter Wave Start");
     final Flutterwave flutterwave = Flutterwave(
-        context: Get.context!,
         publicKey: flutterWaveId,
         currency: "USD",
         redirectUrl: "https://www.google.com/",
@@ -41,7 +40,7 @@ class FlutterWaveService {
         customization: Customization(title: "Erashop"),
         isTestMode: true);
     log("Flutter Wave Finish");
-    final ChargeResponse response = await flutterwave.charge();
+    final ChargeResponse response = await flutterwave.charge(Get.context!);
     log("Flutter Wave ----------- ");
     displayToast(message: response.status.toString());
 
