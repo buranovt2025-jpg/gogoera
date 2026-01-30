@@ -72,8 +72,8 @@ flutter pub get
 flutter build web --release
 
 # 5. Nginx
-echo "[5/6] Настройка Nginx..."
-apt-get install -y -qq nginx 2>/dev/null || true
+echo "[5/6] Установка и настройка Nginx..."
+apt-get install -y nginx
 WEB_ROOT="$WORK_DIR/gogoera/build/web"
 cat > /etc/nginx/sites-available/era_shop_web << 'NGINX'
 server {

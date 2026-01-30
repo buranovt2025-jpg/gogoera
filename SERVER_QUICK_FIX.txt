@@ -21,8 +21,9 @@ export PATH="/opt/flutter/bin:$PATH"
 /opt/flutter/bin/flutter pub get
 /opt/flutter/bin/flutter build web --release
 
---- 4. Перезагрузить Nginx ---
+--- 4. Установить Nginx (если ещё не стоит) и перезагрузить ---
 
+sudo apt-get update && sudo apt-get install -y nginx
 sudo nginx -t && sudo systemctl reload nginx
 
 --- 5. Открыть в браузере ---
