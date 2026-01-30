@@ -1,10 +1,10 @@
-/// API configuration. Set these before running the app.
-/// Backend must be running (Era Shop admin API). Do not leave empty in production.
+/// API configuration. Backend runs on same server, port 5000.
+/// Change BASE_URL if backend is on another host/port.
 class Constant {
-  /// Backend base URL, e.g. https://your-domain.com/ or http://YOUR_IP:5000/
-  static const BASE_URL = "https://your-backend.com/";
-  /// API secret key from backend config (must match server secretKey).
-  static const SECRET_KEY = "YOUR_SECRET_KEY";
+  /// Backend API URL (Era Shop Node.js backend). Must match backend config.baseURL.
+  static const BASE_URL = "http://146.190.238.186:5000/";
+  /// API secret key — must match backend config.secretKey (default from Era Shop install).
+  static const SECRET_KEY = "5TIvw5cpc0";
 
 
 
