@@ -593,7 +593,7 @@ class _HomepageJustForYouState extends State<HomepageJustForYou> {
                                         children: [
                                           Expanded(
                                             child: Text(
-                                              "Size  ${products.attributes![0].value!.join(", ")}",
+                                              "Size  ${(products.attributes?.isNotEmpty ?? false) ? (products.attributes!.first.value?.join(", ") ?? "") : ""}",
                                               overflow: TextOverflow.ellipsis,
                                               style:
                                                   GoogleFonts.plusJakartaSans(
@@ -769,7 +769,7 @@ class _HomePageShortsState extends State<HomePageShorts> {
                                       Align(
                                         alignment: Alignment.bottomLeft,
                                         child: Text(
-                                          "${getReelsForUserController.allReels[index].productId!.description}",
+                                          "${getReelsForUserController.allReels[index].productId?.description ?? ""}",
                                           maxLines: 2,
                                           overflow: TextOverflow.ellipsis,
                                           style: GoogleFonts.plusJakartaSans(
