@@ -1,0 +1,55 @@
+========================================
+  Веб на хостинге — не зависеть от ПК
+========================================
+
+Подключись к серверу по SSH и выполни команды ниже.
+В конце откроешь в браузере: http://146.190.238.186/
+
+--- Шаг 1. Подключение ---
+
+В консоли (CMD или PowerShell) на своём ПК:
+
+  ssh root@146.190.238.186
+
+Введи пароль, когда попросит.
+
+--- Шаг 2. Скачать скрипт и запустить ---
+
+На сервере (после входа по SSH) выполни по очереди:
+
+  cd /root
+  curl -sL -o server_web_setup.sh https://raw.githubusercontent.com/buranovt2025-jpg/gogoera/main/server_web_setup.sh
+  chmod +x server_web_setup.sh
+  bash server_web_setup.sh
+
+Скрипт:
+  - поставит Flutter на сервер
+  - склонирует репозиторий gogoera
+  - соберёт веб (flutter build web)
+  - настроит Nginx
+
+Жди окончания (5–15 минут при первом запуске).
+
+--- Шаг 3. Открыть в браузере ---
+
+На любом устройстве открой в браузере:
+
+  http://146.190.238.186/
+
+Должен открыться интерфейс Era Shop. Не зависит от твоего компьютера.
+
+--- Если curl не скачал скрипт ---
+
+Создай файл вручную:
+
+  nano /root/server_web_setup.sh
+
+Вставь содержимое файла server_web_setup.sh из репозитория:
+  https://github.com/buranovt2025-jpg/gogoera/blob/main/server_web_setup.sh
+
+Сохрани (Ctrl+O, Enter, Ctrl+X), затем:
+
+  chmod +x /root/server_web_setup.sh
+  bash /root/server_web_setup.sh
+
+========================================
