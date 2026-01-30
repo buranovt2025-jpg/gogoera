@@ -48,9 +48,9 @@ class _ProductDetailState extends State<ProductDetail> {
   int click = 0;
   int click1 = 0;
 
-  final categoryDropdownController = DropdownController<String>();
+  final categoryDropdownController = DropdownController();
 
-  Map<String, DropdownController<String>> dropdownControllers = {};
+  Map<String, DropdownController> dropdownControllers = {};
 
   Map<String, String> selectedValues = {};
 

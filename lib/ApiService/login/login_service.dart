@@ -42,10 +42,7 @@ class LoginApi extends GetxService {
       'identity': identity,
     });
 
-    final response = await http.post(url, headers: headers, body: body).timeout(
-      const Duration(seconds: 15),
-      onTimeout: () => throw Exception('Сервер не отвечает'),
-    );
+    final response = await http.post(url, headers: headers, body: body);
     log("Login Api Status code :- ${response.statusCode} \n Body response :- ${response.body}");
 
     if (response.statusCode == 200) {

@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:era_shop/utiles/CoustomWidget/Sign_in_material/common_sign_in_button.dart';
 import 'package:era_shop/utiles/CoustomWidget/Sign_in_material/common_sign_in_textfield.dart';
 import 'package:era_shop/utiles/CoustomWidget/Sign_in_material/dont_account.dart';
@@ -9,6 +8,7 @@ import 'package:era_shop/utiles/CoustomWidget/Sign_in_material/sign_in_titles.da
 import 'package:era_shop/utiles/Strings/strings.dart';
 import 'package:era_shop/utiles/globle_veriables.dart';
 import 'package:era_shop/utiles/Theme/my_colors.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -101,9 +101,9 @@ class CreateAccount extends StatelessWidget {
                                   ),
                                   (kIsWeb ? false : Platform.isIOS)
                                   ? Padding(
-                                      padding: const EdgeInsets.only(top: 15),
-                                      child: Buttons.appleButton(),
-                                    )
+                                    padding: const EdgeInsets.only(top: 15),
+                                    child: Buttons.appleButton(),
+                                  )
                                   : const SizedBox(),
                                   Padding(
                                     padding: EdgeInsets.only(top: Get.height / 17),

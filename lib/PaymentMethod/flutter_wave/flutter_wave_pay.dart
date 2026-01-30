@@ -40,9 +40,16 @@ class FlutterWaveService {
         customization: Customization(title: "Erashop"),
         isTestMode: true);
     log("Flutter Wave Finish");
-    final ChargeResponse response = await flutterwave.charge(Get.context!);
+    final ChargeResponse? response = await flutterwave.charge(Get.context!);
     log("Flutter Wave ----------- ");
-    displayToast(message: response.status.toString());
+    
+    if (response == null) {
+      log("Flutter Wave: User cancelled transaction");
+      displayToast(message: "Transaction cancelled");
+      return;
+    }
+    
+    displayToast(message: response.status?.toString() ?? "Unknown status");
 
     if (response.success == true) {
       log("flutter wave success full payment");

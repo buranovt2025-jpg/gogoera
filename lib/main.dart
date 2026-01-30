@@ -21,7 +21,6 @@ import 'package:get_storage/get_storage.dart';
 import 'package:platform_device_id/platform_device_id.dart';
 
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     statusBarColor: Colors.transparent,
     systemNavigationBarColor: Colors.transparent,
@@ -31,9 +30,7 @@ Future<void> main() async {
   ErrorWidget.builder = (FlutterErrorDetails details) {
     return Container();
   };
-
-  try {
-    await Firebase.initializeApp();
+  if (!kIsWeb) {
     FlutterError.onError = (errorDetails) {
       FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
     };
@@ -41,31 +38,41 @@ Future<void> main() async {
       FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
       return true;
     };
-  } catch (e) {
-    log("Firebase init (web without config?): $e");
   }
 
+  WidgetsFlutterBinding.ensureInitialized();
+  if (!kIsWeb) {
+    try {
+      await Firebase.initializeApp();
+    } catch (e) {
+      log("Firebase init: $e");
+    }
+  }
   await GetStorage.init();
 
   ///************** IDENTIFY **************************\\\
-  try {
-    identify = (await PlatformDeviceId.getDeviceId) ?? (kIsWeb ? 'web-${DateTime.now().millisecondsSinceEpoch}' : 'unknown');
-  } catch (_) {
-    identify = kIsWeb ? 'web-${DateTime.now().millisecondsSinceEpoch}' : 'unknown';
+  if (!kIsWeb) {
+    try {
+      identify = (await PlatformDeviceId.getDeviceId) ?? "web";
+    } catch (_) {
+      identify = "web";
+    }
+  } else {
+    identify = "web";
   }
-  log("Android Id :: $identify");
+  log("Identify :: $identify");
 
   ///************** FCM token ************************\\\
-  try {
-    if (Firebase.apps.isNotEmpty) {
+  if (!kIsWeb) {
+    try {
       FirebaseMessaging messaging = FirebaseMessaging.instance;
       await messaging.getToken().then((value) {
-        fcmToken = value!;
+        fcmToken = value ?? "";
         log("Fcm Token :: $fcmToken");
       });
+    } catch (e) {
+      log("Error FCM token: $e");
     }
-  } catch (e) {
-    log("Error FCM token: $e");
   }
 
   ///************** LOGIN STORAGE ************************\\\\

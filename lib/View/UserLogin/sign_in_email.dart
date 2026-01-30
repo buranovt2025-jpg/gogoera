@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:era_shop/Controller/GetxController/login/user_login_controller.dart';
 import 'package:era_shop/utiles/CoustomWidget/App_theme_services/primary_buttons.dart';
 import 'package:era_shop/utiles/CoustomWidget/App_theme_services/text_titles.dart';
@@ -143,7 +142,7 @@ class _SignInEmailState extends State<SignInEmail> {
                           padding: const EdgeInsets.only(top: 15),
                           child: CommonSignInButton(
                               onTaped: () {
-                                userLogin.signInLogin();
+                                userLogin.signInSandOtp();
                               },
                               text: St.signInText.tr),
                         ),
@@ -153,12 +152,11 @@ class _SignInEmailState extends State<SignInEmail> {
                         ),
                         Buttons.googleButton(onTap: () => googleLoginController.googleLogin()),
 
-                        (kIsWeb ? false : Platform.isIOS)
-                        ? Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 15),
-                            child: Buttons.appleButton(),
-                          )
-                        : const SizedBox(),
+                        Platform.isIOS?
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 15),
+                          child: Buttons.appleButton(),
+                        ):SizedBox(),
                         Padding(
                           padding: const EdgeInsets.only(top: 30),
                           child: DoNotAccount(

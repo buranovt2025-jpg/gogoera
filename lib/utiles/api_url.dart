@@ -1,10 +1,6 @@
-/// API configuration. Backend runs on same server, port 5000.
-/// Change BASE_URL if backend is on another host/port.
 class Constant {
-  /// Backend API URL (Era Shop Node.js backend). Must match backend config.baseURL.
-  static const BASE_URL = "http://146.190.238.186:5000/";
-  /// API secret key — must match backend config.secretKey (default from Era Shop install).
-  static const SECRET_KEY = "5TIvw5cpc0";
+  static const BASE_URL = "";  // Enter your base URL like :: http://182.168.19.35:5000/
+  static const SECRET_KEY = "";  // Enter your key like :: ssf45sd1fs5d1sdf1s56165s15sdf1s
 
 
 
@@ -88,15 +84,13 @@ class Constant {
   static const deleteAccount = "/user/deleteUserAccount";
   static const getAllBank = "bank/getBanks";
 
-  /// Host:port для API (например 146.190.238.186:5000). Использовать с Uri.http().
-  static String getApiAuthority() => Uri.parse(BASE_URL).authority;
-
   static String getDomainFromURL(String url) {
     final uri = Uri.parse(url);
     String host = uri.host;
     if (host.startsWith("www.")) {
       return host.substring(4);
     }
+    print("object::::::host uri:::$host");
     return host;
   }
 }

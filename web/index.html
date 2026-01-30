@@ -1,14 +1,250 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <!--
+    If you are serving your web app in a path other than the root, change the
+    href value below to reflect the base path you are serving from.
+
+    The path provided below has to start and end with a slash "/" in order for
+    it to work correctly.
+
+    For more details:
+    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
+
+    This is a placeholder for base href that will be replaced by the value of
+    the `--base-href` argument provided to `flutter build`.
+  -->
   <base href="$FLUTTER_BASE_HREF">
+
   <meta charset="UTF-8">
-  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+  <meta name="description" content="Era Shop - E-Commerce Application with Live Selling">
+  
+  <!-- Performance optimizations -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+  <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+  <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+
+  <!-- iOS meta tags & icons -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="Era Shop">
+  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="favicon.png"/>
+
   <title>Era Shop</title>
   <link rel="manifest" href="manifest.json">
-  <link rel="icon" type="image/png" href="favicon.png"/>
-  <script src="flutter_bootstrap.js" defer></script>
+  
+  <!-- Preload critical resources - только критичные -->
+  <link rel="preload" href="flutter_bootstrap.js" as="script" crossorigin="anonymous">
+  
+  <!-- DNS prefetch для внешних ресурсов -->
+  <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+  <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+
+  <style>
+    /* Critical CSS - inline for faster rendering */
+    * {
+      box-sizing: border-box;
+    }
+    
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow-x: hidden;
+    }
+    
+    body {
+      background-color: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+        'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+        sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+    }
+    
+    /* Loading indicator */
+    .loading {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+    
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #3498db;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .loading-text {
+      margin-top: 20px;
+      color: #666;
+      font-size: 14px;
+    }
+    
+    /* Error message */
+    .error-message {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      z-index: 10000;
+      max-width: 500px;
+    }
+    
+    .error-message h2 {
+      color: #dc2626;
+      margin-bottom: 10px;
+    }
+    
+    .error-message button {
+      margin-top: 15px;
+      padding: 10px 20px;
+      background: #3498db;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    
+    .error-message button:hover {
+      background: #2980b9;
+    }
+  </style>
 </head>
 <body>
+  <!-- Loading indicator -->
+  <div id="loading" class="loading">
+    <div>
+      <div class="spinner"></div>
+      <div class="loading-text">Загрузка приложения...</div>
+    </div>
+  </div>
+  
+  <!-- Error message -->
+  <div id="error-message" class="error-message">
+    <h2>Ошибка загрузки</h2>
+    <p>Не удалось загрузить приложение. Пожалуйста, обновите страницу.</p>
+    <button onclick="window.location.reload()">Обновить страницу</button>
+  </div>
+
+  <script>
+    // Performance: Hide loading indicator when Flutter app loads
+    window.addEventListener('flutter-first-frame', function() {
+      const loading = document.getElementById('loading');
+      if (loading) {
+        loading.style.display = 'none';
+      }
+      // Performance: Mark first paint
+      if ('performance' in window && 'mark' in performance) {
+        performance.mark('flutter-first-frame');
+      }
+    }, { once: true });
+
+    // Show error if app doesn't load within 30 seconds
+    setTimeout(function() {
+      const loading = document.getElementById('loading');
+      if (loading && loading.style.display !== 'none') {
+        loading.style.display = 'none';
+        document.getElementById('error-message').style.display = 'block';
+      }
+    }, 30000);
+
+    // Handle errors
+    window.addEventListener('error', function(e) {
+      console.error('Global error:', e.error);
+      if (e.filename && (e.filename.includes('main.dart.js') || e.filename.includes('flutter_bootstrap.js'))) {
+        const loading = document.getElementById('loading');
+        if (loading) loading.style.display = 'none';
+        const errorMsg = document.getElementById('error-message');
+        if (errorMsg) errorMsg.style.display = 'block';
+      }
+    }, { passive: true });
+
+    window.addEventListener('unhandledrejection', function(event) {
+      console.error('Unhandled promise rejection:', event.reason);
+    }, { passive: true });
+    
+    // Performance: Preload critical resources
+    if ('requestIdleCallback' in window) {
+      requestIdleCallback(function() {
+        // Preload icons and assets
+        const link = document.createElement('link');
+        link.rel = 'preload';
+        link.as = 'image';
+        link.href = 'icons/Icon-192.png';
+        document.head.appendChild(link);
+      });
+    }
+    
+    // Register Service Worker для кэширования (отложенная регистрация)
+    if ('serviceWorker' in navigator) {
+      // Регистрируем после загрузки страницы, чтобы не блокировать рендеринг
+      window.addEventListener('load', function() {
+        // Используем requestIdleCallback если доступен, иначе setTimeout
+        const registerSW = () => {
+          navigator.serviceWorker.register('/service-worker.js', {
+            scope: '/'
+          })
+          .then(function(registration) {
+            // Проверяем обновления периодически
+            registration.addEventListener('updatefound', () => {
+              const newWorker = registration.installing;
+              if (newWorker) {
+                newWorker.addEventListener('statechange', () => {
+                  if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                    // Новый SW установлен, можно обновить страницу
+                    console.log('New service worker available');
+                  }
+                });
+              }
+            });
+          })
+          .catch(function(error) {
+            // Тихая ошибка - не блокируем работу приложения
+            console.warn('ServiceWorker registration failed:', error);
+          });
+        };
+        
+        if ('requestIdleCallback' in window) {
+          requestIdleCallback(registerSW, { timeout: 2000 });
+        } else {
+          setTimeout(registerSW, 1000);
+        }
+      });
+    }
+  </script>
+  
+  <!-- Load Flutter bootstrap as high priority but async -->
+  <script src="flutter_bootstrap.js" async></script>
 </body>
 </html>

@@ -13,10 +13,8 @@ class SettingApiController extends GetxController {
     try {
       var data = await SettingApi().settingApi();
       setting = data;
-      if (setting?.setting != null) {
-        isUpdateProductRequest = setting!.setting!.isAddProductRequest;
-        cancelOrderCharges = setting!.setting!.cancelOrderCharges;
-      }
+      isUpdateProductRequest = setting!.setting!.isAddProductRequest;
+      cancelOrderCharges = setting!.setting!.cancelOrderCharges;
     } finally {
       isLoading(false);
       log('Setting api call done');

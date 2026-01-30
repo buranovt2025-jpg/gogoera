@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:developer';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:era_shop/Controller/ApiControllers/seller/api_seller_data_controller.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:era_shop/utiles/Theme/theme_service.dart';
 import 'package:era_shop/utiles/Zego/create_engine.dart';
 import 'package:era_shop/utiles/Zego/key_center.dart';
@@ -33,19 +32,15 @@ class SplashScreenController extends GetxController {
   }
 
   Future<void> onBoardingFlow() async {
-    // На вебе не вызываем Connectivity — пакет использует Platform и падает по HTTP
-    if (kIsWeb) {
-      hasInternet.value = true;
-    } else {
-      var connectivityResult = await Connectivity().checkConnectivity();
-      hasInternet.value = connectivityResult != ConnectivityResult.none;
-    }
+    var connectivityResult = await Connectivity().checkConnectivity();
+    hasInternet.value = connectivityResult != ConnectivityResult.none;
     log("${hasInternet.value} internet");
     if (hasInternet.value) {
       await storageData();
       if (getStorage.read("isLogin") == true) {
         await socketManagerController.socketConnect();
         log("###################################### Socket Connect ################################################");
+        // SocketManager().socketConnect();
         Get.offAllNamed("/BottomTabBar");
       } else {
         Timer(const Duration(seconds: 3), () {
@@ -53,10 +48,7 @@ class SplashScreenController extends GetxController {
         });
       }
     } else {
-      // Если нет интернета — через 4 сек всё равно переходим к онбордингу
-      Timer(const Duration(seconds: 4), () {
-        Get.offAllNamed("/PageManage");
-      });
+      onBoardingFlow();
       Get.snackbar(
           "Check Your Internet Connection", "Check Your Internet Connection",
           duration: const Duration(seconds: 5));
@@ -89,6 +81,7 @@ class SplashScreenController extends GetxController {
 
       //******************************************************
       await settingApiController.getSettingApi();
+      print("stripPublishableKey:::::$stripPublishableKey");
       if (settingApiController.setting?.status == true) {
         stripPublishableKey =
             settingApiController.setting?.setting?.stripePublishableKey ?? "";
@@ -106,8 +99,11 @@ class SplashScreenController extends GetxController {
             settingApiController.setting?.setting?.stripeSwitch ?? false;
         flutterWaveSwitch =
             settingApiController.setting?.setting?.flutterWaveSwitch ?? false;
-        log("stripPublishableKey loaded");
-        log("appID: $appID");
+        print("stripPublishableKey:::::$stripPublishableKey");
+        print("stripSecrateKey:::::$stripSecrateKey");
+        print("razorPayKey:::::$razorPayKey");
+        print("appSign:::::$appSign");
+        print("appID:::::$appID");
       }
 
       await whoLoginController.getUserWhoLoginData();

@@ -2,7 +2,6 @@
 import 'dart:io';
 
 import 'package:era_shop/Controller/GetxController/login/user_login_controller.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:era_shop/utiles/CoustomWidget/Sign_in_material/common_sign_in_button.dart';
 import 'package:era_shop/utiles/CoustomWidget/Sign_in_material/common_sign_in_textfield.dart';
 import 'package:era_shop/utiles/CoustomWidget/Sign_in_material/dont_account.dart';
@@ -78,20 +77,9 @@ class _SignInState extends State<SignIn> {
                                 physics: const BouncingScrollPhysics(),
                                 child: Column(
                                   children: [
-                                    const SizedBox(height: 16),
-                                    // Войти без аккаунта — сразу в приложение
-                                    TextButton(
-                                      onPressed: () => Get.offAllNamed("/BottomTabBar"),
-                                      child: Text(
-                                        "Смотреть без входа",
-                                        style: GoogleFonts.plusJakartaSans(
-                                          fontSize: 15,
-                                          color: MyColors.primaryPink,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
+                                    const SizedBox(
+                                      height: 40,
                                     ),
-                                    const SizedBox(height: 24),
                                     CommonSignInTextField(
                                       titleText: St.emailTextFieldTitle.tr,
                                       hintText: St.emailTextFieldHintText.tr,
@@ -115,12 +103,11 @@ class _SignInState extends State<SignIn> {
                                         googleLoginController.googleLogin();
                                       }),
                                     ),
-                                    (kIsWeb ? false : Platform.isIOS)
-                                    ? Padding(
-                                        padding: const EdgeInsets.only(top: 15),
-                                        child: Buttons.appleButton(),
-                                      )
-                                    : const SizedBox(),
+                                    Platform.isIOS?
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 15),
+                                      child: Buttons.appleButton(),
+                                    ):SizedBox(),
                                     Padding(
                                       padding: const EdgeInsets.symmetric(vertical: 30),
                                       child: DoNotAccount(

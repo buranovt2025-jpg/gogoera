@@ -151,9 +151,8 @@ class _PreviewReelsViewState extends State<PreviewReelsView> with TickerProvider
   }
 
   void customSetting() {
-    final reel = controller.mainReels[widget.index];
-    isLike.value = reel.isLike ?? false;
-    customChanges["like"] = (reel.like ?? 0).toInt();
+    isLike.value = controller.mainReels[widget.index].isLike!;
+    customChanges["like"] = int.parse(controller.mainReels[widget.index].like.toString());
   }
 
   void onClickVideo() async {
@@ -199,10 +198,10 @@ class _PreviewReelsViewState extends State<PreviewReelsView> with TickerProvider
     await 500.milliseconds.delay();
     isShowLikeIconAnimation.value = false;
 
-    final videoId = controller.mainReels[widget.index].id ?? "";
-    if (videoId.isNotEmpty) {
-      await ReelsLikeDislikeApi.callApi(loginUserId: userId, videoId: videoId);
-    }
+    await ReelsLikeDislikeApi.callApi(
+      loginUserId: userId,
+      videoId: controller.mainReels[widget.index].id!,
+    );
   }
 
   Future<void> onDoubleClick() async {
@@ -222,20 +221,18 @@ class _PreviewReelsViewState extends State<PreviewReelsView> with TickerProvider
       Vibration.vibrate(duration: 50, amplitude: 128);
       await 1200.milliseconds.delay();
       isShowLikeAnimation.value = false;
-      final videoId = controller.mainReels[widget.index].id ?? "";
-      if (videoId.isNotEmpty) {
-        await ReelsLikeDislikeApi.callApi(loginUserId: userId, videoId: videoId);
-      }
+      await ReelsLikeDislikeApi.callApi(
+        loginUserId: userId,
+        videoId: controller.mainReels[widget.index].id!,
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final reel = controller.mainReels[widget.index];
-    final _attributesArray = reel.productId?.attributes;
-    final aattributeArray = _attributesArray != null && _attributesArray.isNotEmpty
-        ? jsonDecode(jsonEncode(_attributesArray)) as List
-        : <dynamic>[];
+    List<Attributes>? _attributesArray = controller.mainReels[widget.index].productId!.attributes;
+
+    final aattributeArray = jsonDecode(jsonEncode(_attributesArray));
     if (widget.index == widget.currentPageIndex) {
       // Use => Play Current Video On Scrolling...
       (isVideoLoading.value == false && isReelsPage.value) ? onPlayVideo() : null;
@@ -247,7 +244,7 @@ class _PreviewReelsViewState extends State<PreviewReelsView> with TickerProvider
     print("video url::::::::${controller.mainReels[widget.index].description ?? "not here"}");
     return Scaffold(
       body: Obx(
-        () => isVideoLoading.value || chewieController == null
+        () => isVideoLoading.value
             ? Shimmers.reelsView()
             : SizedBox(
                 height: Get.height,
@@ -439,12 +436,11 @@ class _PreviewReelsViewState extends State<PreviewReelsView> with TickerProvider
                                         Text(controller.mainReels[widget.index].productId?.productName ?? "",
                                             overflow: TextOverflow.ellipsis,
                                             style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w600)),
-                                        if (aattributeArray.isNotEmpty && aattributeArray[0] != null)
-                                          Text(
-                                            "${((aattributeArray[0] as Map)["name"]?.toString() ?? "").capitalizeFirst} ${((aattributeArray[0] as Map)["value"] as List?)?.join(", ") ?? ""}",
-                                            overflow: TextOverflow.ellipsis,
-                                            style: GoogleFonts.plusJakartaSans(fontSize: 13.2),
-                                          ).paddingOnly(top: 6),
+                                        Text(
+                                          "${aattributeArray[0]["name"].toString().capitalizeFirst} ${aattributeArray[0]["value"].join(", ")}",
+                                          overflow: TextOverflow.ellipsis,
+                                          style: GoogleFonts.plusJakartaSans(fontSize: 13.2),
+                                        ).paddingOnly(top: 6),
                                         const Spacer(),
                                         Row(
                                           children: [

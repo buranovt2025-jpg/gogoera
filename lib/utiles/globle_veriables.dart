@@ -58,11 +58,12 @@ String editBranch = "";
 bool? isUpdateProductRequest;
 int? cancelOrderCharges;
 
-/// ====== Stripe (set your keys from backend / env) ======== \\\
+/// ====== StripePey ======== \\\
 
 bool stripActive = true;
-String stripPublishableKey = '';  // e.g. pk_test_...
-String stripSecrateKey = '';      // e.g. sk_test_... — never commit real key
+// Set your Stripe keys here or via env (do not commit real keys)
+String stripPublishableKey = '';
+String stripSecrateKey = '';
 
 /// ====== RazorPay ======= \\\
 bool razorPayActive = true;

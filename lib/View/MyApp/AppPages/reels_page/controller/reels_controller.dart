@@ -49,10 +49,11 @@ class ReelsController extends GetxController {
     getReelsForUserModel = await FetchReelsApi.callApi(loginUserId: userId);
 
 
-    final reelsList = getReelsForUserModel?.reels ?? [];
-    if (reelsList.isNotEmpty) {
-      mainReels.addAll(reelsList);
-      update(["onGetReels"]);
+    if (getReelsForUserModel?.reels != null) {
+      if (getReelsForUserModel!.reels!.isNotEmpty) {
+        mainReels.addAll(getReelsForUserModel?.reels ?? []);
+        update(["onGetReels"]);
+      }
     }
     if (mainReels.isEmpty) {
       update(["onGetReels"]);

@@ -67,9 +67,7 @@ class _BottomTabBarState extends State<BottomTabBar> {
             ? Get.height / 13.1
             : (Platform.isIOS)
                 ? Get.height / 9
-                : (Platform.isAndroid)
-                    ? Get.height / 13.1
-                    : Get.height / 13.1,
+                : Get.height / 13.1,
         child: Column(
           children: [
             Divider(

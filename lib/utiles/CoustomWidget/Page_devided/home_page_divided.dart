@@ -58,7 +58,6 @@ class _HomePageNewCollectionState extends State<HomePageNewCollection> {
               height: 225,
               child: GetBuilder<NewCollectionController>(
                   builder: (NewCollectionController controller) {
-                final productsList = controller.getNewCollection?.products ?? [];
                 return Obx(
                   () => controller.isLoading.value
                       ? Shimmers.listViewProductHorizontal()
@@ -67,9 +66,11 @@ class _HomePageNewCollectionState extends State<HomePageNewCollection> {
                           padding: const EdgeInsets.only(left: 18),
                           scrollDirection: Axis.horizontal,
                           physics: const BouncingScrollPhysics(),
-                          itemCount: productsList.length,
+                          itemCount:
+                              controller.getNewCollection!.products!.length,
                           itemBuilder: (context, index) {
-                            var products = productsList[index];
+                            var products =
+                                controller.getNewCollection!.products![index];
                             return Padding(
                               padding: const EdgeInsets.only(right: 10),
                               child: GestureDetector(
@@ -499,20 +500,19 @@ class _HomepageJustForYouState extends State<HomepageJustForYou> {
               )
             : const SizedBox.shrink(),
         Obx(
-          () {
-            final justForYouList = justForYouProductController
-                .justForYouProduct?.justForYouProducts ?? [];
-            return SizedBox(
+          () => SizedBox(
             child: justForYouProductController.isLoading.value
                 ? Shimmers.justForYouProductsShimmer()
                     .paddingSymmetric(vertical: 8, horizontal: 15)
                 : ListView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
-                    itemCount: justForYouList.length,
+                    itemCount: justForYouProductController
+                        .justForYouProduct!.justForYouProducts!.length,
                     scrollDirection: Axis.vertical,
                     itemBuilder: (context, index) {
-                      var products = justForYouList[index];
+                      var products = justForYouProductController
+                          .justForYouProduct!.justForYouProducts![index];
                       return Padding(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 15, vertical: 5),
@@ -593,7 +593,7 @@ class _HomepageJustForYouState extends State<HomepageJustForYou> {
                                         children: [
                                           Expanded(
                                             child: Text(
-                                              "Size  ${(products.attributes != null && products.attributes!.isNotEmpty) ? (products.attributes![0].value?.join(", ") ?? "") : ""}",
+                                              "Size  ${products.attributes![0].value!.join(", ")}",
                                               overflow: TextOverflow.ellipsis,
                                               style:
                                                   GoogleFonts.plusJakartaSans(
@@ -632,8 +632,7 @@ class _HomepageJustForYouState extends State<HomepageJustForYou> {
                       );
                     },
                   ),
-            );
-          },
+          ),
         )
       ],
     );
@@ -769,7 +768,7 @@ class _HomePageShortsState extends State<HomePageShorts> {
                                       Align(
                                         alignment: Alignment.bottomLeft,
                                         child: Text(
-                                          "${getReelsForUserController.allReels[index].productId?.description ?? ""}",
+                                          "${getReelsForUserController.allReels[index].productId!.description}",
                                           maxLines: 2,
                                           overflow: TextOverflow.ellipsis,
                                           style: GoogleFonts.plusJakartaSans(

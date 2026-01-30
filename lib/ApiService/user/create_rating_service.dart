@@ -11,9 +11,9 @@ class CreateRatingService extends GetxService {
     required String productId,
     required String userId,
     required RxDouble rating,
-  }) async {
-    final authority = Constant.getApiAuthority();
+  }) async {final authority = Constant.getApiAuthority();
     final params = {'rating': rating.toString(), 'userId': userId, 'productId': productId};
+
     final url = Uri.http(authority, Constant.ratingAdd, params);
 
     // final body = jsonEncode({'rating': rating, 'userId': userId, 'productId': productId});

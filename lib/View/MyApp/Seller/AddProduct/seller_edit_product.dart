@@ -80,8 +80,8 @@ class _EditProductState extends State<EditProduct> {
     });
   }
 
-  final categoryDropdownController = DropdownController<String>();
-  final subcategoryDropdownController = DropdownController<String>();
+  final categoryDropdownController = DropdownController();
+  final subcategoryDropdownController = DropdownController();
 
   @override
   void initState() {

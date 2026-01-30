@@ -49,33 +49,18 @@ class _SplashScreenState extends State<SplashScreen> with WidgetsBindingObserver
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          SizedBox(height: Get.height / 3),
+          SizedBox(
+            height: Get.height / 3,
+          ),
           Center(
-            child: Text(
-              St.appName.tr,
-              style: GoogleFonts.plusJakartaSans(
-                  fontSize: 48, color: MyColors.white, fontWeight: FontWeight.bold),
-            ),
-          ),
-          SizedBox(height: Get.height / 3),
-          LoadingAnimationWidget.beat(color: MyColors.white, size: 50),
-          const SizedBox(height: 24),
-          // Кнопка «Продолжить» — если авто-переход не сработал (например на вебе)
-          TextButton(
-            onPressed: () => Get.offAllNamed("/PageManage"),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-              decoration: BoxDecoration(
-                color: MyColors.white,
-                borderRadius: BorderRadius.circular(24),
-              ),
               child: Text(
-                "Продолжить",
-                style: GoogleFonts.plusJakartaSans(
-                    fontSize: 16, color: MyColors.primaryPink, fontWeight: FontWeight.w600),
-              ),
-            ),
+            St.appName.tr,
+            style: GoogleFonts.plusJakartaSans(fontSize: 48, color: MyColors.white, fontWeight: FontWeight.bold),
+          )),
+          SizedBox(
+            height: Get.height / 3,
           ),
+          LoadingAnimationWidget.beat(color: MyColors.white, size: 50)
         ],
       ),
     );
