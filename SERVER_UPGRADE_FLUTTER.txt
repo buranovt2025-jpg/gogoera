@@ -1,0 +1,48 @@
+========================================
+  Обновить Flutter на сервере (Dart 3.6+)
+========================================
+
+Ошибка "language version is too high" — на сервере Flutter 3.24.5 (Dart 3.5),
+а пакет image_picker_platform_interface 2.11.1 требует Dart 3.6+.
+
+Выполни на сервере по шагам (обновление Flutter, затем сборка).
+
+--- 1. Обновить Flutter до 3.27+ (Dart 3.6+) ---
+
+sudo rm -rf /opt/flutter
+cd /tmp
+curl -sL -o flutter.tar.xz "https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.27.1-stable.tar.xz" || curl -sL -o flutter.tar.xz "https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.26.0-stable.tar.xz"
+sudo tar xf flutter.tar.xz -C /opt
+rm -f flutter.tar.xz
+if [ -d /opt/flutter/flutter ]; then
+  sudo mv /opt/flutter/flutter /opt/flutter_new
+  sudo rm -rf /opt/flutter
+  sudo mv /opt/flutter_new /opt/flutter
+fi
+git config --global --add safe.directory /opt/flutter
+/opt/flutter/bin/flutter --version
+
+(Должна быть версия 3.27.x и Dart 3.6+.)
+
+Если ссылка 3.27.1 не сработает, попробуй:
+  flutter_linux_3.26.0-stable.tar.xz
+  или взять актуальную с https://docs.flutter.dev/release/archive
+
+--- 2. Собрать веб заново ---
+
+cd /var/era_shop_web/gogoera
+git fetch origin main && git reset --hard origin/main
+export PATH="/opt/flutter/bin:$PATH"
+/opt/flutter/bin/flutter clean
+/opt/flutter/bin/flutter pub get
+/opt/flutter/bin/flutter build web --release
+
+--- 3. Права и Nginx ---
+
+sudo chown -R www-data:www-data /var/era_shop_web/gogoera/build/web
+sudo chmod -R 755 /var/era_shop_web/gogoera/build/web
+sudo systemctl reload nginx
+
+Открой: http://146.190.238.186/
+
+========================================
