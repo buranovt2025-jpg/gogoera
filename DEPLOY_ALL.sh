@@ -78,6 +78,21 @@ server {
     root /var/era_shop_web/gogoera/build/web;
     index index.html;
     server_name _;
+
+    # Security headers (Lighthouse Best Practices)
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header X-Frame-Options "SAMEORIGIN" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+
+    # Cache static assets (Lighthouse: efficient cache lifetimes)
+    location ~* \.(js|wasm|css|woff2?|ttf|ico|png|jpg|jpeg|gif|svg|webp)$ {
+        try_files $uri =404;
+        add_header Cache-Control "public, max-age=31536000, immutable";
+    }
+    location = /index.html {
+        add_header Cache-Control "no-cache, no-store, must-revalidate";
+    }
+
     location / { try_files $uri $uri/ /index.html; }
 }
 NGINX
