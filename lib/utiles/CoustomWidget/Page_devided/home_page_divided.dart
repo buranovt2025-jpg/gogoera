@@ -593,7 +593,7 @@ class _HomepageJustForYouState extends State<HomepageJustForYou> {
                                         children: [
                                           Expanded(
                                             child: Text(
-                                              "Size  ${(products.attributes?.isNotEmpty ?? false) ? (products.attributes!.first.value?.join(", ") ?? "") : ""}",
+                                              "Size  ${(products.attributes != null && products.attributes!.isNotEmpty) ? (products.attributes![0].value?.join(", ") ?? "") : ""}",
                                               overflow: TextOverflow.ellipsis,
                                               style:
                                                   GoogleFonts.plusJakartaSans(
