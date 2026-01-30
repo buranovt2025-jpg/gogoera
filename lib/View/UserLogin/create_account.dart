@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:era_shop/utiles/CoustomWidget/Sign_in_material/common_sign_in_button.dart';
 import 'package:era_shop/utiles/CoustomWidget/Sign_in_material/common_sign_in_textfield.dart';
 import 'package:era_shop/utiles/CoustomWidget/Sign_in_material/dont_account.dart';
@@ -98,11 +99,12 @@ class CreateAccount extends StatelessWidget {
                                       googleLoginController.googleLogin();
                                     }),
                                   ),
-                                  Platform.isIOS?
-                                  Padding(
-                                    padding: const EdgeInsets.only(top: 15),
-                                    child: Buttons.appleButton(),
-                                  ):SizedBox(),
+                                  (kIsWeb ? false : Platform.isIOS)
+                                  ? Padding(
+                                      padding: const EdgeInsets.only(top: 15),
+                                      child: Buttons.appleButton(),
+                                    )
+                                  : const SizedBox(),
                                   Padding(
                                     padding: EdgeInsets.only(top: Get.height / 17),
                                     child: Row(

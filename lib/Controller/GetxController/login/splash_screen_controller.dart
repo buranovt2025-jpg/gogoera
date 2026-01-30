@@ -33,11 +33,11 @@ class SplashScreenController extends GetxController {
   }
 
   Future<void> onBoardingFlow() async {
-    var connectivityResult = await Connectivity().checkConnectivity();
-    // На вебе проверка связи часто даёт "нет" — считаем, что интернет есть
+    // На вебе не вызываем Connectivity — пакет использует Platform и падает по HTTP
     if (kIsWeb) {
       hasInternet.value = true;
     } else {
+      var connectivityResult = await Connectivity().checkConnectivity();
       hasInternet.value = connectivityResult != ConnectivityResult.none;
     }
     log("${hasInternet.value} internet");

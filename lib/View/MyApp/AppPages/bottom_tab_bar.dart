@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:era_shop/Controller/ApiControllers/seller/api_seller_data_controller.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:era_shop/View/MyApp/AppPages/cart_page.dart';
 import 'package:era_shop/View/MyApp/AppPages/reels_page/controller/reels_controller.dart';
 import 'package:era_shop/View/MyApp/AppPages/reels_page/view/reels_view.dart';
@@ -62,11 +63,13 @@ class _BottomTabBarState extends State<BottomTabBar> {
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: SizedBox(
-        height: (Platform.isIOS)
-            ? Get.height / 9
-            : (Platform.isAndroid)
-                ? Get.height / 13.1
-                : 0,
+        height: kIsWeb
+            ? Get.height / 13.1
+            : (Platform.isIOS)
+                ? Get.height / 9
+                : (Platform.isAndroid)
+                    ? Get.height / 13.1
+                    : Get.height / 13.1,
         child: Column(
           children: [
             Divider(

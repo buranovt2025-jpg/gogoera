@@ -2,6 +2,7 @@
 import 'dart:io';
 
 import 'package:era_shop/Controller/GetxController/login/user_login_controller.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:era_shop/utiles/CoustomWidget/Sign_in_material/common_sign_in_button.dart';
 import 'package:era_shop/utiles/CoustomWidget/Sign_in_material/common_sign_in_textfield.dart';
 import 'package:era_shop/utiles/CoustomWidget/Sign_in_material/dont_account.dart';
@@ -103,11 +104,12 @@ class _SignInState extends State<SignIn> {
                                         googleLoginController.googleLogin();
                                       }),
                                     ),
-                                    Platform.isIOS?
-                                    Padding(
-                                      padding: const EdgeInsets.only(top: 15),
-                                      child: Buttons.appleButton(),
-                                    ):SizedBox(),
+                                    (kIsWeb ? false : Platform.isIOS)
+                                    ? Padding(
+                                        padding: const EdgeInsets.only(top: 15),
+                                        child: Buttons.appleButton(),
+                                      )
+                                    : const SizedBox(),
                                     Padding(
                                       padding: const EdgeInsets.symmetric(vertical: 30),
                                       child: DoNotAccount(
