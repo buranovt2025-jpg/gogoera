@@ -1636,10 +1636,19 @@ class _CheckOutState extends State<CheckOut> {
                                             if (getAllCartProductController
                                                     .paymentSelect.value ==
                                                 0) {
-                                              Stripe.publishableKey =
-                                                  stripPublishableKey;
-                                              await Stripe.instance
-                                                  .applySettings();
+                                              if (stripPublishableKey.isEmpty) {
+                                                displayToast(message: "Stripe is not configured. Use another payment method.");
+                                                return;
+                                              }
+                                              try {
+                                                Stripe.publishableKey =
+                                                    stripPublishableKey;
+                                                await Stripe.instance
+                                                    .applySettings();
+                                              } catch (e) {
+                                                displayToast(message: "Stripe initialization failed.");
+                                                return;
+                                              }
 
                                               stripePayService.makePayment(
                                                 amount: createOrderByUserController

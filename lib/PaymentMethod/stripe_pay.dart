@@ -28,6 +28,10 @@ class StripeService {
     required double amount,
     required String currency,
   }) async {
+    if (stripPublishableKey.isEmpty || stripSecrateKey.isEmpty) {
+      displayToast(message: "Stripe is not configured.");
+      return;
+    }
     try {
       isStripeLoading(true);
       paymentIntentData = await createPaymentIntent(amount, currency);

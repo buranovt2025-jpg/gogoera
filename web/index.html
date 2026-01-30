@@ -206,9 +206,8 @@
       });
     }
     
-    // Register Service Worker для кэширования (отложенная регистрация)
-    if ('serviceWorker' in navigator) {
-      // Регистрируем после загрузки страницы, чтобы не блокировать рендеринг
+    // Service Worker только на HTTPS (на HTTP API недоступен — не регистрируем)
+    if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
       window.addEventListener('load', function() {
         // Используем requestIdleCallback если доступен, иначе setTimeout
         const registerSW = () => {
@@ -244,7 +243,7 @@
     }
   </script>
   
-  <!-- Load Flutter bootstrap as high priority but async -->
-  <script src="flutter_bootstrap.js" async></script>
+  <!-- Load Flutter bootstrap (crossorigin matches preload for Lighthouse) -->
+  <script src="flutter_bootstrap.js" async crossorigin="anonymous"></script>
 </body>
 </html>
