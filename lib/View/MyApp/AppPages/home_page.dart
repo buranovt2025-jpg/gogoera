@@ -1,5 +1,6 @@
 import 'package:era_shop/utiles/CoustomWidget/App_theme_services/textfields.dart';
 import 'package:era_shop/utiles/CoustomWidget/Page_devided/home_page_divided.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../Controller/GetxController/user/get_live_seller_list_controller.dart';
@@ -18,6 +19,62 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // На вебе NestedScrollView ломает скролл и клики — один CustomScrollView.
+    if (kIsWeb) {
+      return Scaffold(
+        body: SafeArea(
+          child: RefreshIndicator(
+            onRefresh: () => Future.wait([
+              getLiveSellerListController.getSellerList(),
+              newCollectionController.getNewCollectionData(),
+              justForYouProductController.getJustForYouProduct(),
+            ]),
+            child: CustomScrollView(
+              physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+              slivers: [
+                SliverToBoxAdapter(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      homePageAppBar(),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                        child: GestureDetector(
+                          onTap: () => Get.toNamed("/SearchPage"),
+                          child: dummySearchField(),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SliverToBoxAdapter(
+                  child: HomePageNewCollection(),
+                ),
+                const SliverToBoxAdapter(
+                  child: Padding(
+                    padding: EdgeInsets.only(bottom: 10),
+                    child: HomePageLiveSelling(),
+                  ),
+                ),
+                const SliverToBoxAdapter(
+                  child: Padding(
+                    padding: EdgeInsets.only(bottom: 10),
+                    child: HomePageShorts(),
+                  ),
+                ),
+                const SliverToBoxAdapter(
+                  child: HomepageJustForYou(isShowTitle: true),
+                ),
+                const SliverToBoxAdapter(
+                  child: SizedBox(height: 20),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
     return Scaffold(
         body: SafeArea(
             child: SizedBox(
