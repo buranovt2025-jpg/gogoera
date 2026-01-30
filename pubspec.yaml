@@ -86,9 +86,10 @@ dependencies:
   preload_page_view: ^0.2.0
   vibration: ^1.9.0
 
-# Pin for server Dart 3.6: 2.11.x requires Dart 3.7+; image_picker 1.2+ needs new API
+# Pin for server Dart 3.6: 2.11.x requires Dart 3.7+; image_picker 1.2+ and for_web 3.1+ need new API
 dependency_overrides:
   image_picker: 1.0.8
+  image_picker_for_web: 3.0.2
   image_picker_platform_interface: 2.10.1
 
 dev_dependencies:
