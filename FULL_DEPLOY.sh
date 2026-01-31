@@ -124,7 +124,7 @@ sed -i 's/image_picker_platform_interface: 2.11.1/image_picker_platform_interfac
 rm -f pubspec.lock
 flutter clean
 flutter pub get
-flutter build web --release
+flutter build web --release --web-renderer html
 
 # 9. Nginx
 echo "=== [9/10] Nginx ==="

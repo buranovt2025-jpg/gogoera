@@ -199,18 +199,6 @@
       console.error('Unhandled promise rejection:', event.reason);
     }, { passive: true });
     
-    // Performance: Preload critical resources
-    if ('requestIdleCallback' in window) {
-      requestIdleCallback(function() {
-        // Preload icons and assets
-        const link = document.createElement('link');
-        link.rel = 'preload';
-        link.as = 'image';
-        link.href = 'icons/Icon-192.png';
-        document.head.appendChild(link);
-      });
-    }
-    
     // Service Worker только на HTTPS (на HTTP API недоступен — не регистрируем)
     if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
       window.addEventListener('load', function() {

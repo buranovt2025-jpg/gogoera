@@ -9,7 +9,8 @@ git reset --hard origin/main
 export PATH="/opt/flutter/bin:$PATH"
 flutter clean
 flutter pub get
-flutter build web --release
+# html renderer = меньший бандл (~5MB вместо ~10MB), быстрее LCP
+flutter build web --release --web-renderer html
 sudo chown -R www-data:www-data build/web
 sudo chmod -R 755 build/web
 sudo systemctl reload nginx
