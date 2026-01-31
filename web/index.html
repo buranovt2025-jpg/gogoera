@@ -163,70 +163,43 @@
   </div>
 
   <script>
-    // Performance: Hide loading indicator when Flutter app loads
+    var flutterLoaded = false;
+
+    // Hide loading when Flutter app loads
     window.addEventListener('flutter-first-frame', function() {
-      const loading = document.getElementById('loading');
-      if (loading) {
-        loading.style.display = 'none';
-      }
-      // Performance: Mark first paint
-      if ('performance' in window && 'mark' in performance) {
-        performance.mark('flutter-first-frame');
-      }
+      flutterLoaded = true;
+      var loading = document.getElementById('loading');
+      if (loading) loading.style.display = 'none';
     }, { once: true });
 
-    // Show error if app doesn't load within 90 seconds (Flutter web bundle ~10MB)
+    // Show error only if app didn't load within 2.5 minutes (медленный интернет)
     setTimeout(function() {
-      const loading = document.getElementById('loading');
-      if (loading && loading.style.display !== 'none') {
-        loading.style.display = 'none';
-        document.getElementById('error-message').style.display = 'block';
-      }
-    }, 90000);
-
-    // Handle errors
-    window.addEventListener('error', function(e) {
-      console.error('Global error:', e.error);
-      if (e.filename && (e.filename.includes('main.dart.js') || e.filename.includes('flutter_bootstrap.js'))) {
-        const loading = document.getElementById('loading');
+      if (!flutterLoaded) {
+        var loading = document.getElementById('loading');
         if (loading) loading.style.display = 'none';
-        const errorMsg = document.getElementById('error-message');
-        if (errorMsg) errorMsg.style.display = 'block';
+        var err = document.getElementById('error-message');
+        if (err) err.style.display = 'block';
       }
-    }, { passive: true });
+    }, 150000);
 
-    window.addEventListener('unhandledrejection', function(event) {
-      console.error('Unhandled promise rejection:', event.reason);
-    }, { passive: true });
-    
-    // Service Worker только на HTTPS (на HTTP API недоступен — не регистрируем)
+    // Show error ONLY if Flutter hasn't loaded yet (не показывать при ошибках после загрузки)
+    window.addEventListener('error', function(e) {
+      console.error('Error:', e.error);
+      if (!flutterLoaded && e.filename && (e.filename.indexOf('main.dart.js') >= 0 || e.filename.indexOf('flutter_bootstrap.js') >= 0)) {
+        var loading = document.getElementById('loading');
+        if (loading) loading.style.display = 'none';
+        var err = document.getElementById('error-message');
+        if (err) err.style.display = 'block';
+      }
+    }, true);
+
+    // Service Worker только на HTTPS
     if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
       window.addEventListener('load', function() {
-        // Используем requestIdleCallback если доступен, иначе setTimeout
-        const registerSW = () => {
-          navigator.serviceWorker.register('/service-worker.js', {
-            scope: '/'
-          })
-          .then(function(registration) {
-            // Проверяем обновления периодически
-            registration.addEventListener('updatefound', () => {
-              const newWorker = registration.installing;
-              if (newWorker) {
-                newWorker.addEventListener('statechange', () => {
-                  if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                    // Новый SW установлен, можно обновить страницу
-                    console.log('New service worker available');
-                  }
-                });
-              }
-            });
-          })
-          .catch(function(error) {
-            // Тихая ошибка - не блокируем работу приложения
-            console.warn('ServiceWorker registration failed:', error);
-          });
+        var registerSW = function() {
+          navigator.serviceWorker.register('/service-worker.js', { scope: '/' })
+            .catch(function(err) { console.warn('ServiceWorker:', err); });
         };
-        
         if ('requestIdleCallback' in window) {
           requestIdleCallback(registerSW, { timeout: 2000 });
         } else {
