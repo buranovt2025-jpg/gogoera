@@ -189,7 +189,7 @@ async function run() {
     for (const cat of CATEGORIES) {
       let category = await Category.findOne({ name: cat.name });
       if (!category) {
-        category = new Category({ name: cat.name, image: "https://picsum.photos/200/200?random=" + cat.name.length });
+        category = new Category({ name: cat.name, image: `https://picsum.photos/id/${50 + cat.name.length}/200/200` });
         await category.save();
         console.log("Category:", cat.name);
       }
@@ -230,7 +230,7 @@ async function run() {
           description: p.desc,
           price: p.price,
           shippingCharges: 200,
-          mainImage: `https://picsum.photos/400/400?random=${i}`,
+          mainImage: `https://picsum.photos/id/${100 + i}/400/400`,
           images: [],
           attributes: [{ name: "Размер", value: ["S", "M", "L", "XL"] }, { name: "Цвет", value: ["Чёрный", "Белый", "Серый"] }],
           quantity: 50,
