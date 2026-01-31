@@ -84,8 +84,8 @@ class ChatMessage {
       text: json["text"],
       read: json["read"],
       createdAt: json["createdAt"],
-      sender: senderData is Map ? ChatUser.fromJson(senderData) : null,
-      receiver: receiverData is Map ? ChatUser.fromJson(receiverData) : null,
+      sender: senderData is Map ? ChatUser.fromJson(Map<String, dynamic>.from(senderData)) : null,
+      receiver: receiverData is Map ? ChatUser.fromJson(Map<String, dynamic>.from(receiverData)) : null,
     );
   }
 
