@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
 
@@ -29,7 +29,9 @@ jobs:
         run: flutter pub get
 
       - name: Build APK
-        run: flutter build apk --release
+        run: flutter build apk --release --no-pub
+        env:
+          GRADLE_OPTS: "-Dorg.gradle.configuration-cache=false"
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
