@@ -10,6 +10,14 @@ CMD_TOOLS_URL="https://dl.google.com/android/repository/${CMD_TOOLS}"
 
 echo "=== Установка Android SDK ==="
 
+# 0. Установка Java (нужна для sdkmanager)
+if ! command -v java &>/dev/null; then
+  echo "Установка Java..."
+  apt-get update -qq && apt-get install -y -qq openjdk-17-jdk-headless
+fi
+export JAVA_HOME="${JAVA_HOME:-/usr/lib/jvm/java-17-openjdk-amd64}"
+export PATH="$JAVA_HOME/bin:$PATH"
+
 # Создаём директорию
 mkdir -p $ANDROID_HOME
 cd $ANDROID_HOME
@@ -34,11 +42,11 @@ echo "Установка platforms и build-tools..."
 yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --sdk_root=$ANDROID_HOME \
   "platform-tools" \
   "platforms;android-34" \
-  "build-tools;34.0.0" 2>/dev/null || true
+  "build-tools;34.0.0"
 
 echo ""
-echo "=== Готово! Добавьте в ~/.bashrc или выполните: ==="
+echo "=== Готово! Выполните: ==="
 echo "export ANDROID_HOME=$ANDROID_HOME"
 echo "export PATH=\$PATH:\$ANDROID_HOME/platform-tools:\$ANDROID_HOME/cmdline-tools/latest/bin"
 echo ""
-echo "Затем: source ~/.bashrc && cd /var/era_shop_web/gogoera && flutter build apk --release"
+echo "Затем: bash BUILD_APK_SERVER.sh"

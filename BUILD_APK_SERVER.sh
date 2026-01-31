@@ -7,7 +7,8 @@ cd "$(dirname "$0")"
 
 export PATH="/opt/flutter/bin:$PATH"
 export ANDROID_HOME="${ANDROID_HOME:-/opt/android-sdk}"
-export PATH="$PATH:$ANDROID_HOME/platform-tools:$ANDROID_HOME/cmdline-tools/latest/bin"
+export JAVA_HOME="${JAVA_HOME:-/usr/lib/jvm/java-17-openjdk-amd64}"
+export PATH="$PATH:$JAVA_HOME/bin:$ANDROID_HOME/platform-tools:$ANDROID_HOME/cmdline-tools/latest/bin"
 
 echo "=== Сборка APK на сервере ==="
 flutter clean
