@@ -142,8 +142,28 @@ class _SignInEmailState extends State<SignInEmail> {
                         Padding(
                           padding: const EdgeInsets.only(top: 15),
                           child: CommonSignInButton(
-                              onTaped: () {
-                                userLogin.signInSandOtp();
+                              onTaped: () async {
+                                if (userLogin.signInEMailController.text.trim().isEmpty) {
+                                  userLogin.signInEMailValidate.value = true;
+                                  userLogin.update();
+                                  return;
+                                }
+                                if (userLogin.signInPasswordController.text.isEmpty || userLogin.signInPasswordController.text.length < 8) {
+                                  userLogin.signInPasswordValidate.value = true;
+                                  userLogin.signInPasswordLength.value = userLogin.signInPasswordController.text.length < 8;
+                                  userLogin.update();
+                                  return;
+                                }
+                                userLogin.signInEMailValidate.value = false;
+                                userLogin.signInPasswordValidate.value = false;
+                                userLogin.signInPasswordLength.value = false;
+                                userLogin.update();
+                                userLogin.signInOtpLoading(true);
+                                try {
+                                  await userLogin.signInLogin();
+                                } finally {
+                                  userLogin.signInOtpLoading(false);
+                                }
                               },
                               text: St.signInText.tr),
                         ),
