@@ -1,8 +1,10 @@
 /**
  * Расширенный seed: фейк-аккаунты для всех ролей, товары, рилсы, истории заказов.
  * Запуск: cd backend && node DB/seed_fake_data.js
+ * Сброс и пересоздание: node DB/seed_fake_data.js --reset
  */
 const mongoose = require("mongoose");
+const RESET_MODE = process.argv.includes("--reset");
 const Cryptr = require("cryptr");
 const bcrypt = require("bcryptjs");
 const cryptr = new Cryptr("myTotallySecretKey");
@@ -93,6 +95,13 @@ async function run() {
       setting.zegoAppId = "0";
       await setting.save();
       console.log("Setting: fixed invalid zegoAppId");
+    }
+
+    // Reset: удаляем рилсы и фейк-товары для пересоздания
+    if (RESET_MODE) {
+      const delReels = await Reel.deleteMany({});
+      const delProducts = await Product.deleteMany({ productCode: /^FAKE-/ });
+      console.log("Reset: deleted", delReels.deletedCount, "reels,", delProducts.deletedCount, "fake products");
     }
 
     // 2. Admin
@@ -213,7 +222,7 @@ async function run() {
       const { category, subcats } = categoryMap[catKey];
       const subcat = subcats[i % subcats.length] || subcats[0];
 
-      let product = await Product.findOne({ productName: p.name, seller: seller._id });
+      let product = RESET_MODE ? null : await Product.findOne({ productName: p.name, seller: seller._id });
       if (!product) {
         product = new Product({
           productName: p.name,
