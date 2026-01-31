@@ -120,6 +120,10 @@ app.use("/reportToReel", ReportToReelRoute);
 const BankRoute = require("./server/bank/bank.route");
 app.use("/bank", BankRoute);
 
+//Chat Route
+const ChatRoute = require("./server/chat/chat.route");
+app.use("/chat", ChatRoute);
+
 //Login Route
 const LoginRoute = require("./server/login/login.route");
 app.use("/", LoginRoute);

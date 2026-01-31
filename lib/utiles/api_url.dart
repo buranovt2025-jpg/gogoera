@@ -88,6 +88,10 @@ class Constant {
   static const deleteAccount = "/user/deleteUserAccount";
   static const getAllBank = "bank/getBanks";
 
+  static const chatSend = "chat/send";
+  static const chatConversations = "chat/conversations";
+  static const chatMessages = "chat/messages";
+
   /// Host:port для API (например 146.190.238.186:5000). Использовать с Uri.http().
   /// Required by all API services for correct backend port (5000).
   static String getApiAuthority() => Uri.parse(BASE_URL).authority;

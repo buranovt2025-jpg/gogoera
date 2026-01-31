@@ -1080,6 +1080,7 @@ exports.productDetail = async (req, res) => {
           },
           seller: {
             _id: 1,
+            userId: 1,
             firstName: 1,
             lastName: 1,
             businessTag: 1,

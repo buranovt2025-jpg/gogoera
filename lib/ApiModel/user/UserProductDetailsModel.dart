@@ -289,6 +289,7 @@ class Seller {
   Seller({
       Address? address, 
       String? id, 
+      String? userId, 
       String? firstName, 
       String? lastName, 
       String? businessTag, 
@@ -296,6 +297,7 @@ class Seller {
       String? image,}){
     _address = address;
     _id = id;
+    _userId = userId;
     _firstName = firstName;
     _lastName = lastName;
     _businessTag = businessTag;
@@ -306,6 +308,7 @@ class Seller {
   Seller.fromJson(dynamic json) {
     _address = json['address'] != null ? Address.fromJson(json['address']) : null;
     _id = json['_id'];
+    _userId = json['userId']?.toString();
     _firstName = json['firstName'];
     _lastName = json['lastName'];
     _businessTag = json['businessTag'];
@@ -314,6 +317,7 @@ class Seller {
   }
   Address? _address;
   String? _id;
+  String? _userId;
   String? _firstName;
   String? _lastName;
   String? _businessTag;
@@ -321,6 +325,7 @@ class Seller {
   String? _image;
 Seller copyWith({  Address? address,
   String? id,
+  String? userId,
   String? firstName,
   String? lastName,
   String? businessTag,
@@ -328,6 +333,7 @@ Seller copyWith({  Address? address,
   String? image,
 }) => Seller(  address: address ?? _address,
   id: id ?? _id,
+  userId: userId ?? _userId,
   firstName: firstName ?? _firstName,
   lastName: lastName ?? _lastName,
   businessTag: businessTag ?? _businessTag,
@@ -336,6 +342,7 @@ Seller copyWith({  Address? address,
 );
   Address? get address => _address;
   String? get id => _id;
+  String? get userId => _userId;
   String? get firstName => _firstName;
   String? get lastName => _lastName;
   String? get businessTag => _businessTag;

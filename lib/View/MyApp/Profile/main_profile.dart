@@ -152,6 +152,12 @@ class _MainProfileState extends State<MainProfile> {
                       onTap: () {
                         Get.toNamed("/MyFavorite");
                       }),
+                  ProfileOptions(
+                      image: AssetImage(AppImage.messageBlack),
+                      text: "Сообщения",
+                      onTap: () {
+                        Get.toNamed("/Message");
+                      }),
                   const SizedBox(
                     height: 20,
                   ),

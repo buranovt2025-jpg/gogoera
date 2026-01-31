@@ -1,3 +1,6 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:era_shop/ApiModel/chat/ChatModel.dart';
+import 'package:era_shop/Controller/GetxController/chat/chat_controller.dart';
 import 'package:era_shop/utiles/CoustomWidget/App_theme_services/primary_buttons.dart';
 import 'package:era_shop/utiles/CoustomWidget/App_theme_services/text_titles.dart';
 import 'package:era_shop/utiles/all_images.dart';
@@ -17,20 +20,48 @@ class ChatPage extends StatefulWidget {
 class _ChatPageState extends State<ChatPage> {
   final TextEditingController _textEditingController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
+  final ChatController chatController = Get.put(ChatController());
 
-  final List<String> _messages = [];
+  String? otherUserId;
+  String otherUserName = "";
+  String? otherUserImage;
 
-  // void _sendMessage(String message) {
-  //   setState(() {
-  //     _messages.add(message);
-  //   });
-  //   _textEditingController.clear();
-  //
-  //   _textEditingController.scrollController.animateTo(
-  //       messageShowController.scrollController.position.maxScrollExtent,
-  //       duration: const Duration(milliseconds: 300),
-  //       curve: Curves.easeOut);
-  // }
+  @override
+  void initState() {
+    super.initState();
+    final args = Get.arguments as Map<String, dynamic>?;
+    if (args != null) {
+      otherUserId = args["otherUserId"]?.toString();
+      otherUserName = args["otherUserName"]?.toString() ?? "Пользователь";
+      otherUserImage = args["otherUserImage"]?.toString();
+    }
+    if (otherUserId != null) {
+      chatController.loadMessages(otherUserId!);
+    }
+  }
+
+  @override
+  void dispose() {
+    _textEditingController.dispose();
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _sendMessage() {
+    if (otherUserId == null || _textEditingController.text.trim().isEmpty) return;
+    final text = _textEditingController.text.trim();
+    _textEditingController.clear();
+    chatController.sendMessage(text, otherUserId!);
+    Future.delayed(const Duration(milliseconds: 300), () {
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,15 +80,13 @@ class _ChatPageState extends State<ChatPage> {
                   Padding(
                     padding: const EdgeInsets.only(left: 15, top: 5),
                     child: PrimaryRoundButton(
-                      onTaped: () {
-                        Get.back();
-                      },
+                      onTaped: () => Get.back(),
                       icon: Icons.arrow_back_rounded,
                     ),
                   ),
-                  const Align(
+                  Align(
                     alignment: Alignment.center,
-                    child: GeneralTitle(title: "Jhone Shop"),
+                    child: GeneralTitle(title: otherUserName),
                   ),
                 ],
               ),
@@ -66,361 +95,153 @@ class _ChatPageState extends State<ChatPage> {
         ),
       ),
       body: SafeArea(
-          child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 15),
-        child: SizedBox(
-          height: Get.height,
-          width: Get.width,
-          child: Stack(
-            children: [
-              SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                child: Column(
-                  children: [
-                    Row(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 15),
+          child: SizedBox(
+            height: Get.height,
+            width: Get.width,
+            child: Stack(
+              children: [
+                Obx(() {
+                  if (chatController.isLoading.value && chatController.messages.isEmpty) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  return SingleChildScrollView(
+                    controller: _scrollController,
+                    physics: const BouncingScrollPhysics(),
+                    child: Column(
                       children: [
-                        SizedBox(
-                          height: Get.height / 8.5,
-                          width: Get.width / 1.4,
-                          child: Row(
-                            children: [
-                              Column(
-                                children: [
-                                  Stack(
-                                    alignment: Alignment.bottomRight,
-                                    children: [
-                                      const CircleAvatar(
-                                        backgroundColor: Colors.black54,
-                                        radius: 18,
-                                        backgroundImage: AssetImage("assets/product_review/Image.png"),
-                                      ),
-                                      CircleAvatar(
-                                        backgroundColor: Colors.white,
-                                        radius: 5,
-                                        child: CircleAvatar(
-                                          backgroundColor: MyColors.primaryPink,
-                                          radius: 4.4,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(left: 13),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(top: 8),
-                                      child: Container(
-                                        height: 67,
-                                        width: Get.width / 1.8 - 0.474,
-                                        decoration: const BoxDecoration(
-                                            color: Color(0xffF6F6F6),
-                                            borderRadius: BorderRadius.only(
-                                              topLeft: Radius.circular(24),
-                                              bottomRight: Radius.circular(24),
-                                              topRight: Radius.circular(24),
-                                            )),
-                                        child: Center(
-                                          child: Text(
-                                            "Lorem ipsum dolor sit et,\n"
-                                            "consectetur adipiscing.",
-                                            textAlign: TextAlign.start,
-                                            style: GoogleFonts.plusJakartaSans(
-                                                fontSize: 14, color: Colors.grey.shade700),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    Text(
-                                      "15:42 PM",
-                                      style:
-                                          GoogleFonts.plusJakartaSans(fontSize: 11, color: Colors.grey.shade500),
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        )
+                        ...chatController.messages.map((msg) => _buildMessageBubble(msg)),
+                        SizedBox(height: Get.height / 10),
                       ],
                     ),
-                    SizedBox(
-                      height: Get.height / 50,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
+                  );
+                }),
+                Positioned(
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  child: Container(
+                    color: isDark.value ? MyColors.blackBackground : Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    child: Row(
                       children: [
-                        SizedBox(
-                          height: Get.height / 10.2,
-                          width: Get.width / 1.4,
-                          // color: Colors.lightGreen,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              Column(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(top: 8),
-                                    child: Container(
-                                      height: 48,
-                                      width: Get.width / 1.8 - 0.474,
-                                      decoration: BoxDecoration(
-                                          color: MyColors.primaryPink,
-                                          borderRadius: const BorderRadius.only(
-                                            topLeft: Radius.circular(24),
-                                            bottomLeft: Radius.circular(24),
-                                            topRight: Radius.circular(24),
-                                          )),
-                                      child: Center(
-                                        child: Text(
-                                          "Lorem ipsum dolor sit et",
-                                          textAlign: TextAlign.start,
-                                          style: GoogleFonts.plusJakartaSans(fontSize: 14, color: MyColors.white),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Text(
-                                    "15:42 PM",
-                                    style: GoogleFonts.plusJakartaSans(fontSize: 11, color: MyColors.mediumGrey),
-                                  )
-                                ],
-                              ),
-                              const Padding(
-                                padding: EdgeInsets.only(left: 13),
-                                child: CircleAvatar(
-                                  backgroundColor: Colors.black54,
-                                  radius: 18,
-                                  backgroundImage: AssetImage("assets/icons/Avatar.png"),
-                                ),
-                              ),
-                            ],
-                          ),
-                        )
-                      ],
-                    ),
-                    SizedBox(
-                      height: Get.height / 50,
-                    ),
-                    Row(
-                      children: [
-                        SizedBox(
-                          height: Get.height / 8.5,
-                          width: Get.width / 1.4,
-                          // color: Colors.lightGreen,
-                          child: Row(
-                            children: [
-                              Column(
-                                children: [
-                                  Stack(
-                                    alignment: Alignment.bottomRight,
-                                    children: [
-                                      const CircleAvatar(
-                                        backgroundColor: Colors.black54,
-                                        radius: 18,
-                                        backgroundImage: AssetImage("assets/product_review/Image.png"),
-                                      ),
-                                      CircleAvatar(
-                                        backgroundColor: MyColors.white,
-                                        radius: 5,
-                                        child: CircleAvatar(
-                                          backgroundColor: MyColors.primaryPink,
-                                          radius: 4.4,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(left: 13),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(top: 8),
-                                      child: Container(
-                                        height: 67,
-                                        width: Get.width / 1.8 - 0.474,
-                                        decoration: const BoxDecoration(
-                                            color: Color(0xffF6F6F6),
-                                            borderRadius: BorderRadius.only(
-                                              topLeft: Radius.circular(24),
-                                              bottomRight: Radius.circular(24),
-                                              topRight: Radius.circular(24),
-                                            )),
-                                        child: Center(
-                                          child: Text(
-                                            "Lorem ipsum dolor sit et,\n"
-                                            "consectetur adipiscing.",
-                                            textAlign: TextAlign.start,
-                                            style: GoogleFonts.plusJakartaSans(
-                                                fontSize: 14, color: Colors.grey.shade700),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    Text(
-                                      "15:42 PM",
-                                      style: GoogleFonts.plusJakartaSans(fontSize: 11, color: MyColors.mediumGrey),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        )
-                      ],
-                    ),
-                    SizedBox(
-                      height: Get.height / 50,
-                    ),
-                    SizedBox(
-                      child: ListView.builder(
-                        controller: _scrollController,
-                        shrinkWrap: true,
-                        // physics: const NeverScrollableScrollPhysics(),
-                        itemCount: _messages.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          return Column(
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  SizedBox(
-                                    height: Get.height / 10.2,
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      children: [
-                                        Column(
-                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                          crossAxisAlignment: CrossAxisAlignment.end,
-                                          children: [
-                                            Padding(
-                                              padding: const EdgeInsets.only(top: 8),
-                                              child: Container(
-                                                height: 48,
-                                                decoration: BoxDecoration(
-                                                    color: MyColors.primaryPink,
-                                                    borderRadius: const BorderRadius.only(
-                                                      topLeft: Radius.circular(24),
-                                                      bottomLeft: Radius.circular(24),
-                                                      topRight: Radius.circular(24),
-                                                    )),
-                                                child: Center(
-                                                  child: Padding(
-                                                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                                                    child: Text(
-                                                      overflow: TextOverflow.clip,
-                                                      _messages[index],
-                                                      textAlign: TextAlign.start,
-                                                      style: GoogleFonts.plusJakartaSans(
-                                                          fontSize: 14, color: MyColors.white),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                            Text(
-                                              "15:42 PM",
-                                              style: GoogleFonts.plusJakartaSans(
-                                                  fontSize: 11, color: MyColors.mediumGrey),
-                                            )
-                                          ],
-                                        ),
-                                        const Padding(
-                                          padding: EdgeInsets.only(left: 13),
-                                          child: CircleAvatar(
-                                            backgroundColor: Colors.black54,
-                                            radius: 18,
-                                            backgroundImage: AssetImage("assets/icons/Avatar.png"),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  )
-                                ],
-                              ),
-                              SizedBox(
-                                height: Get.height / 50,
-                              ),
-                            ],
-                          );
-                        },
-                      ),
-                    ),
-                    SizedBox(
-                      height: Get.height / 10,
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(
-                height: Get.height / 1,
-                child: Align(
-                  alignment: Alignment.bottomCenter,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 20),
-                    child: SizedBox(
-                      height: 58,
-                      child: Obx(
-                        () => TextFormField(
-                          controller: _textEditingController,
-                          style: GoogleFonts.plusJakartaSans(
-                            color: isDark.value ? MyColors.white : MyColors.black,
-                          ),
-                          decoration: InputDecoration(
+                        Expanded(
+                          child: TextFormField(
+                            controller: _textEditingController,
+                            style: GoogleFonts.plusJakartaSans(color: isDark.value ? MyColors.white : MyColors.black),
+                            decoration: InputDecoration(
                               filled: true,
                               fillColor: isDark.value ? MyColors.lightBlack : MyColors.dullWhite,
-                              prefixIcon: Padding(
-                                padding: const EdgeInsets.all(14),
-                                child: Image(image: AssetImage(AppImage.pin)),
-                              ),
-                              suffixIcon: Padding(
-                                padding: const EdgeInsets.all(8),
-                                child: GestureDetector(
-                                  onTap: () {
-                                    if (_textEditingController.text.isNotEmpty) {
-                                      setState(() {
-                                        _messages.add(_textEditingController.text);
-                                        _textEditingController.clear();
-                                      });
-                                      _scrollController.animateTo(
-                                        _scrollController.position.maxScrollExtent,
-                                        duration: const Duration(milliseconds: 300),
-                                        curve: Curves.easeOut,
-                                      );
-                                    }
-                                  },
-                                  child: Image(image: AssetImage(AppImage.sendButton)),
-                                ),
-                              ),
-                              hintText: "Message...",
-                              hintStyle: const TextStyle(color: Color(0xff9CA4AB), fontSize: 13),
-                              enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                      color: isDark.value ? Colors.transparent : MyColors.lightGrey, width: 1.3),
-                                  borderRadius: BorderRadius.circular(30)),
+                              hintText: "Сообщение...",
+                              hintStyle: const TextStyle(color: Color(0xff9CA4AB), fontSize: 14),
+                              contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
                               border: OutlineInputBorder(
-                                  borderSide: BorderSide(color: MyColors.primaryPink),
-                                  borderRadius: BorderRadius.circular(30))),
+                                borderRadius: BorderRadius.circular(30),
+                                borderSide: BorderSide.none,
+                              ),
+                            ),
+                            onFieldSubmitted: (_) => _sendMessage(),
+                          ),
                         ),
-                      ),
+                        const SizedBox(width: 10),
+                        GestureDetector(
+                          onTap: () => _sendMessage(),
+                          child: Container(
+                            width: 50,
+                            height: 50,
+                            decoration: BoxDecoration(
+                              color: MyColors.primaryPink,
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(Icons.send, color: Colors.white, size: 24),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
-      )),
+      ),
     );
+  }
+
+  Widget _buildMessageBubble(ChatMessage msg) {
+    final isMe = msg.isFromMe(userId);
+    final time = _formatTime(msg.createdAt);
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Row(
+        mainAxisAlignment: isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          if (!isMe)
+            CircleAvatar(
+              radius: 16,
+              backgroundColor: MyColors.lightGrey,
+              backgroundImage: (otherUserImage != null && otherUserImage!.isNotEmpty)
+                  ? CachedNetworkImageProvider(otherUserImage!)
+                  : null,
+              child: (otherUserImage == null || otherUserImage!.isEmpty)
+                  ? Text(otherUserName.isNotEmpty ? otherUserName[0].toUpperCase() : "?", style: GoogleFonts.plusJakartaSans(fontSize: 14, fontWeight: FontWeight.bold))
+                  : null,
+            ),
+          if (!isMe) const SizedBox(width: 10),
+          Flexible(
+            child: Column(
+              crossAxisAlignment: isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  decoration: BoxDecoration(
+                    color: isMe ? MyColors.primaryPink : const Color(0xffF6F6F6),
+                    borderRadius: BorderRadius.only(
+                      topLeft: const Radius.circular(20),
+                      topRight: const Radius.circular(20),
+                      bottomLeft: Radius.circular(isMe ? 20 : 4),
+                      bottomRight: Radius.circular(isMe ? 4 : 20),
+                    ),
+                  ),
+                  child: Text(
+                    msg.text ?? "",
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 14,
+                      color: isMe ? Colors.white : Colors.grey.shade800,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  time,
+                  style: GoogleFonts.plusJakartaSans(fontSize: 11, color: Colors.grey),
+                ),
+              ],
+            ),
+          ),
+          if (isMe) const SizedBox(width: 10),
+          if (isMe)
+            CircleAvatar(
+              radius: 16,
+              backgroundColor: MyColors.lightGrey,
+              backgroundImage: editImage.isNotEmpty ? CachedNetworkImageProvider(editImage) : null,
+              child: editImage.isEmpty ? Icon(Icons.person, size: 20, color: Colors.grey) : null,
+            ),
+        ],
+      ),
+    );
+  }
+
+  String _formatTime(dynamic createdAt) {
+    if (createdAt == null) return "";
+    try {
+      final dt = createdAt is DateTime ? createdAt : DateTime.parse(createdAt.toString());
+      return "${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}";
+    } catch (_) {
+      return "";
+    }
   }
 }

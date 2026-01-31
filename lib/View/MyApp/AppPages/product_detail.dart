@@ -941,31 +941,61 @@ class _ProductDetailState extends State<ProductDetail> {
                                         ],
                                       ),
                                     ),
-                                    GestureDetector(
-                                      onTap: () {
-                                        setState(() {});
-                                        isFollow = !isFollow;
-                                        followUnFollowController.followUnfollowData(
-                                            sellerId: userProductDetailsController
-                                                .userProductDetails!.product![0].seller!.id
-                                                .toString());
-                                      },
-                                      child: Container(
-                                        height: 32,
-                                        width: 76,
-                                        decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(11),
-                                            border: Border.all(width: 1.3, color: MyColors.primaryPink)),
-                                        child: Center(
-                                            child: Text(
-                                          userProductDetailsController.userProductDetails!.product![0].isFollow ==
-                                                  true & isFollow
-                                              ? St.unFollow.tr
-                                              : St.follow.tr,
-                                          style: GoogleFonts.plusJakartaSans(
-                                              fontWeight: FontWeight.w600, fontSize: 12, color: MyColors.primaryPink),
-                                        )),
-                                      ),
+                                    Row(
+                                      children: [
+                                        GestureDetector(
+                                          onTap: () {
+                                            final seller = userProductDetailsController.userProductDetails!.product![0].seller;
+                                            final chatUserId = seller?.userId ?? seller?.id;
+                                            if (chatUserId != null && userId.isNotEmpty) {
+                                              Get.toNamed("/ChatPage", arguments: {
+                                                "otherUserId": chatUserId,
+                                                "otherUserName": seller?.businessName ?? "Продавец",
+                                                "otherUserImage": seller?.image,
+                                              });
+                                            } else if (userId.isEmpty) {
+                                              Get.toNamed("/SignIn");
+                                            } else {
+                                              displayToast(message: "Не удалось начать чат");
+                                            }
+                                          },
+                                          child: Container(
+                                            height: 32,
+                                            width: 40,
+                                            decoration: BoxDecoration(
+                                                borderRadius: BorderRadius.circular(11),
+                                                color: MyColors.primaryPink),
+                                            child: const Icon(Icons.chat_bubble_outline, color: Colors.white, size: 18),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 8),
+                                        GestureDetector(
+                                          onTap: () {
+                                            setState(() {});
+                                            isFollow = !isFollow;
+                                            followUnFollowController.followUnfollowData(
+                                                sellerId: userProductDetailsController
+                                                    .userProductDetails!.product![0].seller!.id
+                                                    .toString());
+                                          },
+                                          child: Container(
+                                            height: 32,
+                                            width: 76,
+                                            decoration: BoxDecoration(
+                                                borderRadius: BorderRadius.circular(11),
+                                                border: Border.all(width: 1.3, color: MyColors.primaryPink)),
+                                            child: Center(
+                                                child: Text(
+                                              userProductDetailsController.userProductDetails!.product![0].isFollow ==
+                                                      true & isFollow
+                                                  ? St.unFollow.tr
+                                                  : St.follow.tr,
+                                              style: GoogleFonts.plusJakartaSans(
+                                                  fontWeight: FontWeight.w600, fontSize: 12, color: MyColors.primaryPink),
+                                            )),
+                                          ),
+                                        ),
+                                      ],
                                     )
                                   ],
                                 ),
