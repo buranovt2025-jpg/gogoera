@@ -12,7 +12,7 @@ import 'package:era_shop/utiles/routes_pages.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart' show kIsWeb, FlutterError, FlutterErrorDetails;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -28,6 +28,10 @@ Future<void> main() async {
   RenderErrorBox.backgroundColor = Colors.transparent;
   RenderErrorBox.textStyle = ui.TextStyle(color: Colors.transparent);
   ErrorWidget.builder = (FlutterErrorDetails details) {
+    if (kIsWeb) {
+      debugPrint('ErrorWidget: ${details.exception}');
+      debugPrint('Stack: ${details.stack}');
+    }
     return Container();
   };
   if (!kIsWeb) {
@@ -37,6 +41,13 @@ Future<void> main() async {
     PlatformDispatcher.instance.onError = (error, stack) {
       FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
       return true;
+    };
+  } else {
+    FlutterError.onError = (FlutterErrorDetails details) {
+      debugPrint('FlutterError: ${details.exception}');
+      debugPrint('Library: ${details.library}');
+      debugPrint('Stack: ${details.stack}');
+      FlutterError.dumpErrorToConsole(details);
     };
   }
 
