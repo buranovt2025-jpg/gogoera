@@ -67,10 +67,11 @@ class _HomePageNewCollectionState extends State<HomePageNewCollection> {
                           scrollDirection: Axis.horizontal,
                           physics: const BouncingScrollPhysics(),
                           itemCount:
-                              controller.getNewCollection!.products!.length,
+                              controller.getNewCollection?.products?.length ?? 0,
                           itemBuilder: (context, index) {
                             var products =
-                                controller.getNewCollection!.products![index];
+                                controller.getNewCollection?.products?[index];
+                            if (products == null) return const SizedBox.shrink();
                             return Padding(
                               padding: const EdgeInsets.only(right: 10),
                               child: GestureDetector(
@@ -97,7 +98,7 @@ class _HomePageNewCollectionState extends State<HomePageNewCollection> {
                                               width: double.maxFinite,
                                               fit: BoxFit.cover,
                                               imageUrl:
-                                                  products.mainImage.toString(),
+                                                  (products.mainImage ?? '').toString().isEmpty ? 'https://via.placeholder.com/152' : products.mainImage.toString(),
                                               placeholder: (context, url) =>
                                                   const Center(
                                                       child:
@@ -347,8 +348,8 @@ class _HomePageLiveSellingState extends State<HomePageLiveSelling> {
                                   getLiveSellerListController) =>
                               ListView.builder(
                             physics: const BouncingScrollPhysics(),
-                            itemCount: getLiveSellerListController
-                                .getSellerLiveList.length,
+                            itemCount: (getLiveSellerListController
+                                .getSellerLiveList).length,
                             padding: const EdgeInsets.only(left: 20),
                             scrollDirection: Axis.horizontal,
                             itemBuilder: (context, index) {
@@ -414,9 +415,13 @@ class _HomePageLiveSellingState extends State<HomePageLiveSelling> {
                                     child: Stack(
                                       children: [
                                         CachedNetworkImage(
-                                          imageUrl: getLiveSellerListController
-                                              .getSellerLiveList[index].image
-                                              .toString(),
+                                          imageUrl: (getLiveSellerListController
+                                                  .getSellerLiveList[index].image ?? '')
+                                              .toString().isEmpty
+                                              ? 'https://via.placeholder.com/66'
+                                              : getLiveSellerListController
+                                                  .getSellerLiveList[index].image
+                                                  .toString(),
                                           imageBuilder:
                                               (context, imageProvider) =>
                                                   Container(
@@ -508,11 +513,12 @@ class _HomepageJustForYouState extends State<HomepageJustForYou> {
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: justForYouProductController
-                        .justForYouProduct!.justForYouProducts!.length,
+                        .justForYouProduct?.justForYouProducts?.length ?? 0,
                     scrollDirection: Axis.vertical,
                     itemBuilder: (context, index) {
                       var products = justForYouProductController
-                          .justForYouProduct!.justForYouProducts![index];
+                          .justForYouProduct?.justForYouProducts?[index];
+                      if (products == null) return const SizedBox.shrink();
                       return Padding(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 15, vertical: 5),
@@ -535,7 +541,7 @@ class _HomepageJustForYouState extends State<HomepageJustForYou> {
                                     height: Get.height / 8.2,
                                     width: Get.width / 4.3,
                                     fit: BoxFit.cover,
-                                    imageUrl: products.mainImage.toString(),
+                                    imageUrl: (products.mainImage ?? '').toString().isEmpty ? 'https://via.placeholder.com/152' : products.mainImage.toString(),
                                     placeholder: (context, url) => const Center(
                                         child: CupertinoActivityIndicator(
                                       animating: true,
@@ -707,6 +713,8 @@ class _HomePageShortsState extends State<HomePageShorts> {
                             itemCount:
                                 getReelsForUserController.allReels.length,
                             itemBuilder: (context, index) {
+                              final reel = getReelsForUserController.allReels[index];
+                              final thumb = (reel.thumbnail ?? '').toString().isEmpty ? 'https://via.placeholder.com/172' : reel.thumbnail.toString();
                               return GestureDetector(
                                 onTap: () {
                                   getReelsForUserController.pageController =
@@ -726,8 +734,7 @@ class _HomePageShortsState extends State<HomePageShorts> {
                                           height: 268,
                                           width: 172,
                                           fit: BoxFit.cover,
-                                          imageUrl:
-                                              "${getReelsForUserController.allReels[index].thumbnail}",
+                                          imageUrl: thumb,
                                           placeholder: (context, url) =>
                                               const Center(
                                                   child:
