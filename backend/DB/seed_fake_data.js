@@ -84,9 +84,15 @@ async function run() {
         cancelOrderCharges: 0,
         withdrawCharges: 0,
         withdrawLimit: 1000,
+        zegoAppId: "0",
+        zegoAppSignIn: "",
       });
       await setting.save();
       console.log("Setting created");
+    } else if (!/^\d+$/.test(setting.zegoAppId || "")) {
+      setting.zegoAppId = "0";
+      await setting.save();
+      console.log("Setting: fixed invalid zegoAppId");
     }
 
     // 2. Admin

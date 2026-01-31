@@ -101,7 +101,7 @@ class SplashScreenController extends GetxController {
             settingApiController.setting?.setting?.razorSecretKey ?? "";
         flutterWaveId =
             settingApiController.setting?.setting?.flutterWaveId ?? "";
-        appID = int.parse(settingApiController.setting?.setting?.zegoAppId??'') ;
+        appID = int.tryParse(settingApiController.setting?.setting?.zegoAppId ?? '') ?? 0;
         appSign = settingApiController.setting?.setting?.zegoAppSignIn ?? "";
         razorPaySwitch =
             settingApiController.setting?.setting?.razorPaySwitch ?? false;
