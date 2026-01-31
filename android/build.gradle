@@ -17,6 +17,23 @@ allprojects {
         google()
         mavenCentral()
     }
+    configurations.all {
+        resolutionStrategy {
+            force "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+            force "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+            force "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+            force "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+        }
+    }
+}
+
+// Force Kotlin 1.5.20+ for plugin buildscripts (AGP requirement, platform_device_id uses 1.3.50)
+subprojects { subproject ->
+    subproject.buildscript {
+        configurations.classpath.resolutionStrategy {
+            force "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        }
+    }
 }
 
 rootProject.buildDir = '../build'
