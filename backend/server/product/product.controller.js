@@ -1629,22 +1629,20 @@ exports.isNewCollection = async (req, res) => {
   }
 };
 
-//get all new collection for user (home page)
+//get all new collection for user (home page) - guest mode when no userId
 exports.getAllisNewCollection = async (req, res) => {
   try {
-    if (!req.query.userId) {
-      return res.status(200).json({ status: false, message: "Oops! Invalid details." });
-    }
-
-    const userId = new mongoose.Types.ObjectId(req.query.userId);
+    const isGuest = !req.query.userId || String(req.query.userId).trim() === "";
+    const userId = isGuest ? new mongoose.Types.ObjectId() : new mongoose.Types.ObjectId(req.query.userId);
 
     const [user, userIsSeller, products] = await Promise.all([
-      User.findById(userId),
-      Seller.findOne({ userId: userId }).lean(),
+      isGuest ? null : User.findById(userId),
+      isGuest ? null : Seller.findOne({ userId: userId }).lean(),
       Product.aggregate([
         {
           $match: {
             isNewCollection: true,
+            createStatus: "Approved",
           },
         },
         {
@@ -1696,15 +1694,15 @@ exports.getAllisNewCollection = async (req, res) => {
       ]),
     ]);
 
-    if (!user) {
+    if (!isGuest && !user) {
       return res.status(200).json({ status: false, message: "User does not found." });
     }
 
-    if (user.isBlock) {
+    if (!isGuest && user && user.isBlock) {
       return res.status(200).json({ status: false, message: "You are blocked by admin!" });
     }
 
-    const filteredProducts = products.filter((product) => !userIsSeller || product.seller.toString() !== userIsSeller._id.toString());
+    const filteredProducts = isGuest ? products : products.filter((product) => !userIsSeller || product.seller.toString() !== userIsSeller._id.toString());
 
     return res.status(200).json({
       status: true,
@@ -1943,18 +1941,15 @@ exports.popularProducts = async (req, res) => {
   }
 };
 
-//get just for you products for user(home page)
+//get just for you products for user(home page) - guest mode when no userId
 exports.justForYou = async (req, res) => {
   try {
-    if (!req.query.userId) {
-      return res.status(200).json({ status: false, message: "Oops! Invalid details." });
-    }
-
-    const userId = new mongoose.Types.ObjectId(req.query.userId);
+    const isGuest = !req.query.userId || String(req.query.userId).trim() === "";
+    const userId = isGuest ? new mongoose.Types.ObjectId() : new mongoose.Types.ObjectId(req.query.userId);
 
     const [user, userIsSeller, justForYouProducts] = await Promise.all([
-      User.findById(userId),
-      Seller.findOne({ userId: userId }).lean(),
+      isGuest ? null : User.findById(userId),
+      isGuest ? null : Seller.findOne({ userId: userId }).lean(),
       Product.aggregate([
         {
           $match: {
@@ -1998,15 +1993,15 @@ exports.justForYou = async (req, res) => {
       ]),
     ]);
 
-    if (!user) {
+    if (!isGuest && !user) {
       return res.status(200).json({ status: false, message: "User does not found." });
     }
 
-    if (user.isBlock) {
+    if (!isGuest && user && user.isBlock) {
       return res.status(200).json({ status: false, message: "You are blocked by admin!" });
     }
 
-    const filteredProducts = justForYouProducts.filter((product) => !userIsSeller || product.seller.toString() !== userIsSeller._id.toString());
+    const filteredProducts = isGuest ? justForYouProducts : justForYouProducts.filter((product) => !userIsSeller || product.seller.toString() !== userIsSeller._id.toString());
 
     return res.status(200).json({
       status: true,

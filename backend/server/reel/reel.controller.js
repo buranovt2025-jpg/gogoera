@@ -455,27 +455,23 @@ exports.uploadReel = async (req, res) => {
   }
 };
 
-//if isFakeData switch on then get all (real + fake) reels by the user otherwise only get all real reels by the user
+//if isFakeData switch on then get all (real + fake) reels by the user otherwise only get all real reels by the user. Guest mode when no userId.
 exports.getReelsForUser = async (req, res) => {
   try {
-    if (!req.query.userId) {
-      return res.status(200).json({
-        status: false,
-        message: "Oops ! Invalid details!",
-      });
-    }
-
+    const isGuest = !req.query.userId || String(req.query.userId).trim() === "";
     const start = req.query.start ? parseInt(req.query.start) : 1;
     const limit = req.query.limit ? parseInt(req.query.limit) : 20;
 
-    const user = await User.findOne({ _id: req.query.userId });
-    if (!user) {
+    const user = isGuest ? null : await User.findOne({ _id: req.query.userId });
+    if (!isGuest && !user) {
       return res.status(200).json({ status: false, message: "User does not found." });
     }
 
-    if (user.isBlock) {
+    if (!isGuest && user && user.isBlock) {
       return res.status(200).json({ status: false, message: "you are blocked by the admin." });
     }
+
+    const userIdForLike = isGuest ? new mongoose.Types.ObjectId() : user._id;
 
     const data = [
       {
@@ -483,7 +479,7 @@ exports.getReelsForUser = async (req, res) => {
           from: "likehistoryofreels",
           let: {
             reelId: "$_id",
-            userId: user._id,
+            userId: userIdForLike,
           },
           pipeline: [
             {
