@@ -30,7 +30,7 @@ class AddToCartBottomSheet extends StatelessWidget {
   AddProductToCartController addProductToCartController = Get.put(AddProductToCartController());
   RemoveAllProductFromCartController removeAllProductFromCartController = Get.put(RemoveAllProductFromCartController());
 
-  Map<String, DropdownController<String>> dropdownControllers = {};
+  Map<String, DropdownController> dropdownControllers = {};
   bool areAllAttributesFilled = false;
 
   @override
@@ -57,7 +57,7 @@ class AddToCartBottomSheet extends StatelessWidget {
                               padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
                               child: Column(
                                 children: userProductDetailsController.selectedValuesByType.keys.map((key) {
-                                  DropdownController<String> dropdownController = dropdownControllers[key] ?? DropdownController<String>();
+                                  DropdownController dropdownController = dropdownControllers[key] ?? DropdownController();
                                   userProductDetailsController.categoryDropdownItems =
                                       userProductDetailsController.selectedValuesByType[key]!.map((value) {
                                     return CoolDropdownItem<String>(
