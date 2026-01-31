@@ -2,7 +2,7 @@
 /// Change BASE_URL if backend is on another host/port.
 class Constant {
   /// Backend API URL (Era Shop Node.js backend). Must match backend config.baseURL.
-  static const BASE_URL = "http://146.190.238.186:5000/";
+  static const BASE_URL = "http://165.232.74.201:5000/";
   /// API secret key — must match backend config.secretKey (default from Era Shop install).
   static const SECRET_KEY = "5TIvw5cpc0";
 

@@ -2,7 +2,7 @@
 # Запуск: правый клик -> "Выполнить с PowerShell" или в терминале: .\run_seed_via_ssh.ps1
 # Если путь на сервере другой — поменяй $REPO ниже (например /root/gogoera).
 
-$SERVER = "146.190.238.186"
+$SERVER = "165.232.74.201"
 $USER   = "root"
 $REPO   = "/var/era_shop_web/gogoera"
 

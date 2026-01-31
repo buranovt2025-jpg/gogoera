@@ -1,6 +1,6 @@
 #!/bin/bash
 # Запускать на сервере (Ubuntu): bash server_web_setup.sh
-# После выполнения открыть в браузере: http://146.190.238.186/
+# После выполнения открыть в браузере: http://165.232.74.201/
 
 set -e
 echo "=== Era Shop: установка веб на сервере ==="
@@ -98,5 +98,5 @@ nginx -t && systemctl reload nginx
 
 echo "[6/6] Готово."
 echo ""
-echo "Открой в браузере: http://146.190.238.186/"
+echo "Открой в браузере: http://165.232.74.201/"
 echo "(или http://$(curl -s ifconfig.me 2>/dev/null || echo 'IP-сервера')/)"

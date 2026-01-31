@@ -107,4 +107,4 @@ sudo ufw allow 5000 2>/dev/null || true
 sudo ufw reload 2>/dev/null || true
 
 echo ""
-echo "Готово. Сайт: http://146.190.238.186/  API: http://146.190.238.186:5000/"
+echo "Готово. Сайт: http://165.232.74.201/  API: http://165.232.74.201:5000/"
