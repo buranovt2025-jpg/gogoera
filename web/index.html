@@ -164,34 +164,66 @@
 
   <script>
     var flutterLoaded = false;
+    var errorShowTimeoutId = null;
 
-    // Hide loading when Flutter app loads
+    function showErrorOverlay() {
+      if (flutterLoaded) return;
+      var loading = document.getElementById('loading');
+      if (loading) loading.style.display = 'none';
+      var err = document.getElementById('error-message');
+      if (err) err.style.display = 'block';
+    }
+
+    function scheduleErrorShow(delayMs) {
+      if (errorShowTimeoutId) return;
+      errorShowTimeoutId = setTimeout(function() {
+        errorShowTimeoutId = null;
+        if (!flutterLoaded) showErrorOverlay();
+      }, delayMs);
+    }
+
+    function cancelErrorShow() {
+      if (errorShowTimeoutId) {
+        clearTimeout(errorShowTimeoutId);
+        errorShowTimeoutId = null;
+      }
+    }
+
     window.addEventListener('flutter-first-frame', function() {
       flutterLoaded = true;
+      cancelErrorShow();
       var loading = document.getElementById('loading');
       if (loading) loading.style.display = 'none';
     }, { once: true });
 
-    // Show error only if app didn't load within 2.5 minutes (медленный интернет)
+    // Fallback: скрыть загрузку когда Flutter canvas появился (если событие не сработало)
+    window.addEventListener('load', function() {
+      setTimeout(function() {
+        if (flutterLoaded) return;
+        var canvas = document.querySelector('flt-glass-pane, canvas');
+        if (canvas) {
+          flutterLoaded = true;
+          cancelErrorShow();
+          var loading = document.getElementById('loading');
+          if (loading) loading.style.display = 'none';
+        }
+      }, 3000);
+    });
+
     setTimeout(function() {
-      if (!flutterLoaded) {
-        var loading = document.getElementById('loading');
-        if (loading) loading.style.display = 'none';
-        var err = document.getElementById('error-message');
-        if (err) err.style.display = 'block';
-      }
+      if (!flutterLoaded) showErrorOverlay();
     }, 150000);
 
-    // Show error ONLY if Flutter hasn't loaded yet (не показывать при ошибках после загрузки)
     window.addEventListener('error', function(e) {
       console.error('Error:', e.error);
-      if (!flutterLoaded && e.filename && (e.filename.indexOf('main.dart.js') >= 0 || e.filename.indexOf('flutter_bootstrap.js') >= 0)) {
-        var loading = document.getElementById('loading');
-        if (loading) loading.style.display = 'none';
-        var err = document.getElementById('error-message');
-        if (err) err.style.display = 'block';
-      }
+      var fromFlutter = !e.filename || e.filename.indexOf('main.dart') >= 0 || e.filename.indexOf('flutter') >= 0 || e.filename.indexOf('.js') >= 0;
+      if (!flutterLoaded && fromFlutter) scheduleErrorShow(8000);
     }, true);
+
+    window.addEventListener('unhandledrejection', function(e) {
+      console.error('Unhandled rejection:', e.reason);
+      if (!flutterLoaded) scheduleErrorShow(12000);
+    });
 
     // Service Worker только на HTTPS
     if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
