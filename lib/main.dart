@@ -18,7 +18,8 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:platform_device_id/platform_device_id.dart';
+import 'dart:io' show Platform;
+import 'package:device_info_plus/device_info_plus.dart';
 
 Future<void> main() async {
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
@@ -64,7 +65,16 @@ Future<void> main() async {
   ///************** IDENTIFY **************************\\\
   if (!kIsWeb) {
     try {
-      identify = (await PlatformDeviceId.getDeviceId) ?? "web";
+      final deviceInfo = DeviceInfoPlugin();
+      if (Platform.isAndroid) {
+        final androidInfo = await deviceInfo.androidInfo;
+        identify = androidInfo.id;
+      } else if (Platform.isIOS) {
+        final iosInfo = await deviceInfo.iosInfo;
+        identify = iosInfo.identifierForVendor ?? "unknown";
+      } else {
+        identify = "unknown";
+      }
     } catch (_) {
       identify = "web";
     }
