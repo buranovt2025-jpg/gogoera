@@ -17,7 +17,7 @@ class SettingApi extends GetxService {
     final response = await http.get(
       url,
       headers: headers,
-    );
+    ).timeout(const Duration(seconds: 10));
 
     log('Setting Api :: STATUS CODE :: ${response.statusCode} \n RESPONSE :: ${response.body}');
 

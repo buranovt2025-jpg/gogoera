@@ -23,12 +23,31 @@ class SplashScreenController extends GetxController {
       Get.put(SocketManagerController());
 
   RxBool hasInternet = true.obs;
+  bool _navigated = false;
+
+  void _safeNavigate() {
+    if (_navigated) return;
+    _navigated = true;
+    if (getStorage.read("isLogin") == true) {
+      Get.offAllNamed("/BottomTabBar");
+    } else {
+      Get.offAllNamed("/PageManage");
+    }
+  }
 
   @override
   Future<void> onInit() async {
     log("Splash Screen ");
     if (!kIsWeb) {
       initFirebase();
+    }
+    if (kIsWeb) {
+      Future.delayed(const Duration(seconds: 20), () {
+        if (!_navigated) {
+          log("Splash fallback: force navigate (20s timeout)");
+          _safeNavigate();
+        }
+      });
     }
     await onBoardingFlow();
     super.onInit();
@@ -46,15 +65,26 @@ class SplashScreenController extends GetxController {
     }
     log("${hasInternet.value} internet");
     if (hasInternet.value) {
-      await storageData();
+      try {
+        await storageData().timeout(const Duration(seconds: 15), onTimeout: () {
+          log("storageData timeout - proceeding");
+        });
+      } catch (e) {
+        log("storageData error: $e");
+      }
       if (getStorage.read("isLogin") == true) {
-        await socketManagerController.socketConnect();
+        try {
+          await socketManagerController.socketConnect().timeout(const Duration(seconds: 5), onTimeout: () {
+            log("socketConnect timeout - proceeding");
+          });
+        } catch (e) {
+          log("socketConnect error: $e");
+        }
         log("###################################### Socket Connect ################################################");
-        // SocketManager().socketConnect();
-        Get.offAllNamed("/BottomTabBar");
+        _safeNavigate();
       } else {
         Timer(const Duration(seconds: 3), () {
-          Get.offAllNamed("/PageManage");
+          _safeNavigate();
         });
       }
     } else {

@@ -50,7 +50,7 @@ class _BottomTabBarState extends State<BottomTabBar> {
   @override
   void initState() {
     // TODO: implement initState
-      createEngine();
+    if (!kIsWeb) createEngine();
     if (widget.index != null) {
       setState(() {
         _selectedIndex = widget.index!;
