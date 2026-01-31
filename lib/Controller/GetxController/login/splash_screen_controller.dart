@@ -7,6 +7,7 @@ import 'package:era_shop/utiles/Zego/create_engine.dart';
 import 'package:era_shop/utiles/Zego/key_center.dart';
 import 'package:era_shop/utiles/globle_veriables.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 
@@ -26,14 +27,23 @@ class SplashScreenController extends GetxController {
   @override
   Future<void> onInit() async {
     log("Splash Screen ");
-    initFirebase();
+    if (!kIsWeb) {
+      initFirebase();
+    }
     await onBoardingFlow();
     super.onInit();
   }
 
   Future<void> onBoardingFlow() async {
-    var connectivityResult = await Connectivity().checkConnectivity();
-    hasInternet.value = connectivityResult != ConnectivityResult.none;
+    // На вебе connectivity_plus ненадёжен — считаем, что интернет есть
+    if (kIsWeb) {
+      hasInternet.value = true;
+    } else {
+      final result = await Connectivity().checkConnectivity();
+      hasInternet.value = result is List
+          ? (result as List).any((r) => r != ConnectivityResult.none)
+          : result != ConnectivityResult.none;
+    }
     log("${hasInternet.value} internet");
     if (hasInternet.value) {
       await storageData();

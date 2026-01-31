@@ -153,7 +153,12 @@
   <!-- Error message -->
   <div id="error-message" class="error-message">
     <h2>Ошибка загрузки</h2>
-    <p>Не удалось загрузить приложение. Пожалуйста, обновите страницу.</p>
+    <p>Не удалось загрузить приложение. Возможные причины:</p>
+    <ul style="text-align:left; margin:15px 0;">
+      <li>Медленное интернет-соединение (подождите, первый запуск ~10 MB)</li>
+      <li>Блокировка расширениями браузера</li>
+      <li>Устаревший кэш — попробуйте Ctrl+F5</li>
+    </ul>
     <button onclick="window.location.reload()">Обновить страницу</button>
   </div>
 
@@ -170,14 +175,14 @@
       }
     }, { once: true });
 
-    // Show error if app doesn't load within 30 seconds
+    // Show error if app doesn't load within 90 seconds (Flutter web bundle ~10MB)
     setTimeout(function() {
       const loading = document.getElementById('loading');
       if (loading && loading.style.display !== 'none') {
         loading.style.display = 'none';
         document.getElementById('error-message').style.display = 'block';
       }
-    }, 30000);
+    }, 90000);
 
     // Handle errors
     window.addEventListener('error', function(e) {
