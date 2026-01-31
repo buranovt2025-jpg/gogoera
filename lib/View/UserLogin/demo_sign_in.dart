@@ -103,7 +103,7 @@ class _SignInState extends State<SignIn> {
                                         googleLoginController.googleLogin();
                                       }),
                                     ),
-                                    Platform.isIOS?
+                                    (kIsWeb ? false : Platform.isIOS)?
                                     Padding(
                                       padding: const EdgeInsets.only(top: 15),
                                       child: Buttons.appleButton(),

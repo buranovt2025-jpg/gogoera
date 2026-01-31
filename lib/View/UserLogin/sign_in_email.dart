@@ -152,7 +152,7 @@ class _SignInEmailState extends State<SignInEmail> {
                         ),
                         Buttons.googleButton(onTap: () => googleLoginController.googleLogin()),
 
-                        Platform.isIOS?
+                        (kIsWeb ? false : Platform.isIOS)?
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 15),
                           child: Buttons.appleButton(),
