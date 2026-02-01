@@ -68,7 +68,14 @@ sed -i 's/image_picker_platform_interface: 2.11.1/image_picker_platform_interfac
 rm -f pubspec.lock
 /opt/flutter/bin/flutter clean
 /opt/flutter/bin/flutter pub get
-/opt/flutter/bin/flutter build web --release
+/opt/flutter/bin/flutter build web --release --base-href / --web-renderer html --pwa-strategy=none
+# Проверка: должны быть main.dart.js или flutter_bootstrap.js
+if [ ! -f "$WEB_ROOT/main.dart.js" ] && [ ! -f "$WEB_ROOT/flutter_bootstrap.js" ]; then
+  echo "ОШИБКА: Сборка не создала main.dart.js или flutter_bootstrap.js!"
+  ls -la "$WEB_ROOT/" 2>/dev/null || true
+  exit 1
+fi
+echo "Сборка OK: $(ls "$WEB_ROOT"/*.js 2>/dev/null | wc -l) JS файлов"
 
 echo "=== [7/8] Nginx ==="
 sudo tee /etc/nginx/sites-available/era_shop_web << 'NGINX'
@@ -84,15 +91,14 @@ server {
     add_header X-Frame-Options "SAMEORIGIN" always;
     add_header Referrer-Policy "strict-origin-when-cross-origin" always;
 
-    # Cache static assets (Lighthouse: efficient cache lifetimes)
-    location ~* \.(js|wasm|css|woff2?|ttf|ico|png|jpg|jpeg|gif|svg|webp)$ {
+    location ~* \.(js|wasm|css|woff2?|ttf|ico|png|jpg|jpeg|gif|svg|webp|json)$ {
         try_files $uri =404;
         add_header Cache-Control "public, max-age=31536000, immutable";
     }
     location = /index.html {
         add_header Cache-Control "no-cache, no-store, must-revalidate";
     }
-
+    location /assets/ { try_files $uri =404; add_header Cache-Control "public, max-age=31536000"; }
     location / { try_files $uri $uri/ /index.html; }
 }
 NGINX

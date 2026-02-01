@@ -124,7 +124,7 @@ sed -i 's/image_picker_platform_interface: 2.11.1/image_picker_platform_interfac
 rm -f pubspec.lock
 flutter clean
 flutter pub get
-flutter build web --release --web-renderer html --pwa-strategy=none
+flutter build web --release --base-href / --web-renderer html --pwa-strategy=none
 
 # 9. Nginx
 echo "=== [9/10] Nginx ==="
@@ -140,14 +140,17 @@ server {
     add_header X-Frame-Options "SAMEORIGIN" always;
     add_header Referrer-Policy "strict-origin-when-cross-origin" always;
 
-    location ~* \.(js|wasm|css|woff2?|ttf|ico|png|jpg|jpeg|gif|svg|webp)$ {
+    # Статика: js, wasm, css, шрифты, картинки
+    location ~* \.(js|wasm|css|woff2?|ttf|ico|png|jpg|jpeg|gif|svg|webp|json)$ {
         try_files $uri =404;
         add_header Cache-Control "public, max-age=31536000, immutable";
     }
     location = /index.html {
         add_header Cache-Control "no-cache, no-store, must-revalidate";
     }
+    location /assets/ { try_files $uri =404; add_header Cache-Control "public, max-age=31536000"; }
 
+    # SPA fallback
     location / { try_files $uri $uri/ /index.html; }
 }
 NGINX

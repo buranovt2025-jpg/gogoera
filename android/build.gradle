@@ -20,6 +20,20 @@ subprojects { subproject ->
             force "org.jetbrains.kotlin:kotlin-gradle-plugin:${rootProject.ext.kotlin_version}"
         }
     }
+    // Fix AGP 8: add namespace for plugins that don't have it
+    subproject.afterEvaluate {
+        if (subproject.plugins.hasPlugin('com.android.library')) {
+            subproject.android {
+                if (namespace == null || namespace.isEmpty()) {
+                    def manifest = subproject.file('src/main/AndroidManifest.xml')
+                    if (manifest.exists()) {
+                        def pkg = new XmlParser().parse(manifest).attribute('package')
+                        if (pkg) namespace = pkg
+                    }
+                }
+            }
+        }
+    }
 }
 
 rootProject.buildDir = '../build'
