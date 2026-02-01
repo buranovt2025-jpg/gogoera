@@ -32,6 +32,7 @@ jobs:
       - name: Clean and get dependencies
         run: |
           flutter clean
+          rm -rf ~/.gradle/caches/transforms-* 2>/dev/null || true
           flutter pub get
 
       - name: Build APK
