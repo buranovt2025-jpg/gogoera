@@ -19,6 +19,7 @@ const Product = require("../server/product/product.model");
 const Reel = require("../server/reel/reel.model");
 const Order = require("../server/order/order.model");
 const Setting = require("../server/setting/setting.model");
+const Login = require("../server/login/login.model");
 
 const PASSWORD = "12345678";
 const ENCRYPTED_PASSWORD = cryptr.encrypt(PASSWORD);
@@ -118,6 +119,18 @@ async function run() {
       admin.password = BCRYPT_PASSWORD;
       await admin.save();
       console.log("Admin password updated");
+    }
+
+    // 2.5 Login flag — показывать форму входа (не регистрации)
+    let loginDoc = await Login.findOne();
+    if (!loginDoc) {
+      loginDoc = new Login({ login: true });
+      await loginDoc.save();
+      console.log("Login: created, login=true");
+    } else if (loginDoc.login === false) {
+      loginDoc.login = true;
+      await loginDoc.save();
+      console.log("Login: set login=true (админка покажет форму входа)");
     }
 
     // 3. Buyers
